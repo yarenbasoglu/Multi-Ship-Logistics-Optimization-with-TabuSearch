@@ -1,0 +1,389 @@
+
+import csv
+import io
+import random
+import math
+from collections import defaultdict
+
+
+routes_csv = """Route,Ship,StartPort,EndPort,Stops,DemandTons,DurationDays,CostUSD
+R1,S1,P1,P1,L1,1100,4,28000
+R2,S1,P1,P1,L1-L2,2000,7,49000
+R3,S1,P1,P2,L3-L7,2000,7,49000
+R4,S1,P1,P2,L5-L4,2000,9,63000
+R5,S1,P1,P1,L5-L6,2000,9,63000
+R6,S1,P2,P2,L1,1100,4,28000
+R7,S1,P2,P2,L1-L2,2000,7,49000
+R8,S1,P2,P1,L3-L7,2000,7,49000
+R9,S1,P2,P1,L5-L4,2000,9,63000
+R10,S1,P2,P2,L5-L6,2000,9,63000
+R11,S2,P1,P1,L1,1100,4,34000
+R12,S2,P1,P1,L1-L2,2000,7,59500
+R13,S2,P1,P2,L3-L7,2300,7,59500
+R14,S2,P1,P2,L5-L4,2500,9,76500
+R15,S2,P1,P1,L5-L6,2500,9,76500
+R16,S2,P2,P2,L1,1100,4,34000
+R17,S2,P2,P2,L1-L2,2000,7,59500
+R18,S2,P2,P1,L3-L7,2300,7,59500
+R19,S2,P2,P1,L5-L4,2500,9,76500
+R20,S2,P2,P2,L5-L6,2500,9,76500
+R21,S3,P1,P1,L1,1100,4,40000
+R22,S3,P1,P1,L1-L2,2000,7,70000
+R23,S3,P1,P2,L3-L7,2300,7,70000
+R24,S3,P1,P2,L5-L4,3000,9,90000
+R25,S3,P1,P1,L5-L6,2900,9,90000
+R26,S3,P2,P2,L1,1100,4,40000
+R27,S3,P2,P2,L1-L2,2000,7,70000
+R28,S3,P2,P1,L3-L7,2300,7,70000
+R29,S3,P2,P1,L5-L4,3000,9,90000
+R30,S3,P2,P2,L5-L6,2900,9,90000
+R31,S4,P1,P1,L1,1100,4,48000
+R32,S4,P1,P1,L1-L2,2000,7,84000
+R33,S4,P1,P2,L3-L7,2300,7,84000
+R34,S4,P1,P2,L5-L4,3000,9,108000
+R35,S4,P1,P1,L5-L6,2900,9,108000
+R36,S4,P2,P2,L1,1100,4,48000
+R37,S4,P2,P2,L1-L2,2000,7,84000
+R38,S4,P2,P1,L3-L7,2300,7,84000
+R39,S4,P2,P1,L5-L4,3000,9,108000
+R40,S4,P2,P2,L5-L6,2900,9,108000
+R41,S5,P1,P1,L1,1100,4,54000
+R42,S5,P1,P1,L1-L2,2000,7,94500
+R43,S5,P1,P2,L3-L7,2300,7,94500
+R44,S5,P1,P2,L5-L4,3000,9,121500
+R45,S5,P1,P1,L5-L6,2900,9,121500
+R46,S5,P2,P2,L1,1100,4,54000
+R47,S5,P2,P2,L1-L2,2000,7,94500
+R48,S5,P2,P1,L3-L7,2300,7,94500
+R49,S5,P2,P1,L5-L4,3000,9,121500
+R50,S5,P2,P2,L5-L6,2900,9,121500
+R51,S6,P1,P1,L1,1100,4,30000
+R52,S6,P1,P1,L1-L2,2000,7,52500
+R53,S6,P1,P2,L3-L7,2300,7,52500
+R54,S6,P1,P2,L5-L4,2400,9,67500
+R55,S6,P1,P1,L5-L6,2400,9,67500
+R56,S6,P2,P2,L1,1100,4,30000
+R57,S6,P2,P2,L1-L2,2000,7,52500
+R58,S6,P2,P1,L3-L7,2300,7,52500
+R59,S6,P2,P1,L5-L4,2400,9,67500
+R60,S6,P2,P2,L5-L6,2400,9,67500
+R61,S7,P1,P1,L1,1100,4,22000
+R62,S7,P1,P1,L1-L2,2000,7,38500
+R63,S7,P1,P2,L3-L7,1400,7,38500
+R64,S7,P1,P2,L5-L4,1400,9,49500
+R65,S7,P1,P1,L5-L6,1400,9,49500
+R66,S7,P2,P2,L1,1100,4,22000
+R67,S7,P2,P2,L1-L2,2000,7,38500
+R68,S7,P2,P1,L3-L7,1400,7,38500
+R69,S7,P2,P1,L5-L4,1400,9,49500
+R70,S7,P2,P2,L5-L6,1400,9,49500
+R71,S8,P1,P1,L1,1100,4,24000
+R72,S8,P1,P1,L1-L2,2000,7,42000
+R73,S8,P1,P2,L3-L7,1800,7,42000
+R74,S8,P1,P2,L5-L4,1800,9,54000
+R75,S8,P1,P1,L5-L6,1800,9,54000
+R76,S8,P2,P2,L1,1100,4,24000
+R77,S8,P2,P2,L1-L2,2000,7,42000
+R78,S8,P2,P1,L3-L7,1800,7,42000
+R79,S8,P2,P1,L5-L4,1800,9,54000
+R80,S8,P2,P2,L5-L6,1800,9,54000
+R81,S9,P1,P1,L1,1100,4,30000
+R82,S9,P1,P1,L1-L2,2000,7,52500
+R83,S9,P1,P2,L3-L7,2200,7,52500
+R84,S9,P1,P2,L5-L4,2200,9,67500
+R85,S9,P1,P1,L5-L6,2200,9,67500
+R86,S9,P2,P2,L1,1100,4,30000
+R87,S9,P2,P2,L1-L2,2000,7,52500
+R88,S9,P2,P1,L3-L7,2200,7,52500
+R89,S9,P2,P1,L5-L4,2200,9,67500
+R90,S9,P2,P2,L5-L6,2200,9,67500
+R91,S10,P1,P1,L1,1100,4,36000
+R92,S10,P1,P1,L1-L2,2000,7,63000
+R93,S10,P1,P2,L3-L7,2300,7,63000
+R94,S10,P1,P2,L5-L4,2900,9,81000
+R95,S10,P1,P1,L5-L6,2900,9,81000
+R96,S10,P2,P2,L1,1100,4,36000
+R97,S10,P2,P2,L1-L2,2000,7,63000
+R98,S10,P2,P1,L3-L7,2300,7,63000
+R99,S10,P2,P1,L5-L4,2900,9,81000
+R100,S10,P2,P2,L5-L6,2900,9,81000
+"""
+
+routes = []
+reader = csv.DictReader(io.StringIO(routes_csv.strip()))
+for row in reader:
+    row["DemandTons"] = int(row["DemandTons"])
+    row["DurationDays"] = int(row["DurationDays"])
+    row["CostUSD"] = int(row["CostUSD"])
+    routes.append(row)
+
+
+total_demand = {
+    "L1": 1100,
+    "L2": 900,
+    "L3": 1500,
+    "L4": 1400,
+    "L5": 1700,
+    "L6": 1200,
+    "L7": 800,
+    "L8": 1000,
+    "L9": 1100,
+    "L10": 1000,
+}
+
+# %60 benzin, %40 dizel diyelim
+#hangi gemi hangi ürünü taşıyor,hangi lokasyonun benzin talebi karşılanmış,stok bandı tutuyor mu
+demand_gas = {}      #boş sözlük "L1": 660 gibi
+demand_diesel = {}   
+for loc, d in total_demand.items():
+    gas = int(round(d * 0.6))
+    diesel = d - gas
+    demand_gas[loc] = gas    #["L1"] =660
+    demand_diesel[loc] = diesel  #["L1"] =440
+
+north = {"L1", "L2", "L3", "L7", "L8", "L9"}
+south = {"L4", "L5", "L6", "L10"}
+depots = {"L1", "L3", "L5"}  
+
+#her rota hangi bölgede
+#kuzey gemileri güneye gidemez
+for r in routes:
+    stops = r["Stops"].split("-") # durakları listeye çevirme "L3-L7" ["L3","L7"]
+    r["StopsList"] = stops
+    if all(s in north for s in stops):
+        r["Region"] = "North"
+    elif all(s in south for s in stops):
+        r["Region"] = "South"
+    else:
+        r["Region"] = "Mixed"
+
+#gemilere göre rotaları gruplama 
+routes_by_ship = defaultdict(list)
+for idx, r in enumerate(routes):   
+    routes_by_ship[r["Ship"]].append(idx)  #R1 -> Ship S1 routes_by_ship = { "S1": [0, 1, 2, ..., 9]
+
+#35 gün kısıtlaması
+ships = sorted(routes_by_ship.keys())
+HORIZON = 35  
+
+#hangi gemi hangi rotada hangi üsrünü taşıyor ona göre toplam maliyet hesaplama
+def evaluate_solution(
+    assignments,   #assignments = {"S1": (ridx, "gas"), "S2": (None, None), 
+    shortage_penalty_per_ton=700,   #talep karşılanmazsa (eksik tonaj)
+    overstock_penalty_per_ton=70,   #fazla gönderirsek
+    depot_shortage_penalty_per_ton=400,   #depolarda hedef stok bandının altında kalırsa
+    depot_overstock_penalty_per_ton=40,   #depoda çok stok olursa
+):
+    total_cost = 0.0   #rota maliyeti+idle ceza gelir+stok talep cezaları
+    
+    #hangi rota nereye kaç ton ürün götürdü
+    delivered_gas = {loc: 0.0 for loc in total_demand.keys()}
+    delivered_diesel = {loc: 0.0 for loc in total_demand.keys()}
+
+    #bu gemi hangi rotayı hangi ürünü taşıyor yoksa hiç rota almamış mı
+    for ship in ships:
+        ridx, product = assignments.get(ship, (None, None))
+        #rotayı bul ve maliyete ekle
+        if ridx is not None:
+            r = routes[ridx]
+            total_cost += r["CostUSD"]
+          
+            idle_days = HORIZON - r["DurationDays"]  #35-7 = 28 gün boşta ya da kirada olabilir
+            if idle_days >= 5:
+                total_cost -= 15000  #maliyetten düş kar gibi kirada
+            else:
+                total_cost += 10000  
+
+            stops = r["StopsList"] #rotayı alıyoruz
+
+            #bu rota üzerindeki lokasyonların talepleri topluyoruz
+            total_weight = 0.0
+            for s in stops:
+                total_weight += demand_gas[s] + demand_diesel[s]
+            if total_weight <= 0:
+                total_weight = len(stops)
+
+            #kapasiteyi duraklara dağıtma share o durak için talep payı
+            # L3 demand = 1500 L7 demand = 800 total 2300 , share L3 1500/2300 = 0.652 L3 e giden 2000*0.652 = 1304 ton 
+            for s in stops:
+                share = (demand_gas[s] + demand_diesel[s]) / total_weight
+                ton = r["DemandTons"] * share
+                if product == "gas":
+                    delivered_gas[s] += ton
+                elif product == "diesel":
+                    delivered_diesel[s] += ton
+                
+        else:
+            # bu gemi için ridx none ise
+            idle_days = HORIZON
+            if idle_days >= 5:
+                total_cost -= 15000
+            else:
+                total_cost += 10000
+
+    #bu lokasyona giden/gereken mikatarlar
+    for loc in total_demand.keys():
+        gas_sent = delivered_gas[loc]  #gönderilmiş
+        diesel_sent = delivered_diesel[loc]  
+        gas_req = demand_gas[loc]  #istenen
+        diesel_req = demand_diesel[loc]
+        
+        # L1,L3,L5 depolardı
+        if loc in depots:
+            # Depolar: hedef = talep, band: 0.8x – 1.2x
+            #gas reg 1000 min 800 maax 1200 arasındaysa okay altı üstündeyse ceza
+            min_g = 0.8 * gas_req
+            max_g = 1.2 * gas_req
+            min_d = 0.8 * diesel_req
+            max_d = 1.2 * diesel_req
+
+            #depolar için benzin ve dizel cezası
+            if gas_sent < min_g:
+                total_cost += (min_g - gas_sent) * depot_shortage_penalty_per_ton
+            elif gas_sent > max_g:
+                total_cost += (gas_sent - max_g) * depot_overstock_penalty_per_ton
+
+            
+            if diesel_sent < min_d:
+                total_cost += (min_d - diesel_sent) * depot_shortage_penalty_per_ton
+            elif diesel_sent > max_d:
+                total_cost += (diesel_sent - max_d) * depot_overstock_penalty_per_ton
+        else:
+            #depo değil normal talep noktası için 
+            shortage_g = max(0.0, gas_req - gas_sent)
+            shortage_d = max(0.0, diesel_req - diesel_sent)
+            over_g = max(0.0, gas_sent - gas_req)
+            over_d = max(0.0, diesel_sent - diesel_req)
+
+            total_cost += (shortage_g + shortage_d) * shortage_penalty_per_ton
+            total_cost += (over_g + over_d) * overstock_penalty_per_ton
+
+    return total_cost, delivered_gas, delivered_diesel
+
+#Verilen başlangıç çözümünden yola çıkıp,komşu çözümler üretip, tabu listesiyle bazı hareketleri yasaklayarak,en düşük maliyetli (en iyi) çözümü bulmaya çalışmak.
+def tabu_search(
+    max_iters=250,   #250 iterasyon çalışsın
+    tabu_tenure=12,  #bir hareket tabu olursa 12 iterayon boyunca tekrar kullanılamaz 
+    neighborhood_size=60,  #her adımda 60 tane komşu çözüm oluşturur içlerinden en iyisini seç
+    seed=42,  #rastgelelik kontrolü sabitleme durumu
+):
+    random.seed(seed)   # raporu üç kere çalıştırdım üçünde de aynı sonucu aldı 
+
+    # Başlangıç çözümü: her gemiye en ucuz rotayı ver, ürün random
+    current = {}
+    for ship in ships:
+        candidates = routes_by_ship[ship]  #S1 rotaları: [0,1,2,3,...]
+        best_r = min(candidates, key=lambda idx: routes[idx]["CostUSD"])  #rotalar arasından en ucuz rota seçilir
+        product = random.choice(["gas", "diesel"])
+        current[ship] = (best_r, product)  #current = {"S1": (3, "gas"),"S2": (12, "diesel"),
+
+    current_cost, _, _ = evaluate_solution(current)
+    best = dict(current)
+    best_cost = current_cost
+
+    tabu = {}  # move -> kalan iterasyon
+
+    for it in range(max_iters):  #60 tane komşu çözüm denenicek en ucuz olan seçilicek
+        best_neighbor = None
+        best_neighbor_cost = math.inf
+        best_move = None
+        
+        #komuşu çözüm üretme
+        for _ in range(neighborhood_size):
+            ship = random.choice(ships)  #S3 gemisinin rotasını değiştir Ya da S7’nin ürününü değiştir Ya da S10 için rota None yap (idle)
+            cur_route, cur_prod = current[ship]
+
+            #Rastgele bir gemi seç (ship)
+            #Bu geminin mevcut (rota, ürün) değerini al Sonra:
+            #%50 ihtimalle → rotasını değiştir (yeni rota ya gerçek rota ya da None = idle)
+             #%50 ihtimalle → ürününü değiştir (gas ↔ diesel)
+             #bu sayede aynı çözüm etrafında dolaşığ yeni çözümler üretilir
+            if random.random() < 0.5:
+                # rota değişikliği (None dahil)
+                choices = routes_by_ship[ship] + [None]
+                new_route = random.choice(choices)
+                if new_route == cur_route:
+                    continue
+                new_prod = cur_prod if new_route is not None else None
+            else:
+                # ürün değişikliği (rota varsa)
+                if cur_route is None:
+                    continue
+                new_route = cur_route
+                new_prod = "diesel" if cur_prod == "gas" else "gas"
+
+            move = (ship, new_route, new_prod) #şu gemiye şu rotayı şu ürünü ver
+
+            # tabu kontrolü (aspiration: global en iyiyi iyileştiriyorsa izin ver)
+            #Tabu hamleler genelde yasaktır ama daha iyi sonuç verecekse tabu bile olsa uygulanabilir.
+            if move in tabu and best_cost <= current_cost:
+                continue
+
+            neighbor = dict(current)
+            neighbor[ship] = (new_route, new_prod)
+            cost, _, _ = evaluate_solution(neighbor)
+
+            if cost < best_neighbor_cost:
+                best_neighbor_cost = cost
+                best_neighbor = neighbor
+                best_move = move
+
+        if best_neighbor is None:
+            break
+
+        current = best_neighbor
+        current_cost = best_neighbor_cost
+        #Mevcut çözümün bir kopyasını al (neighbor)
+        #Sadece seçtiğin geminin rotasını/ürününü değiştir
+        #Bu yeni çözümün maliyetini hesapla
+    #Eğer bu maliyet o iterasyonda gördüğün en düşük maliyetten daha düşükse, bu komşuyu “şu anki iterasyonun en iyisi” olarak sakla.
+
+        # tabu güncelle
+        # süresi bitenleri sil
+        expired = [m for m, t in tabu.items() if t <= 1]
+        for m in expired:
+            tabu.pop(m, None)
+        # kalanların süresini azalt
+        for m in list(tabu):
+            tabu[m] -= 1
+        # yeni hamleyi tabu yap
+        tabu[best_move] = tabu_tenure
+
+        # global en iyi
+        if current_cost < best_cost:
+            best_cost = current_cost
+            best = dict(current)
+            
+    return best, best_cost
+
+
+
+if __name__ == "__main__":
+    best_solution, best_cost = tabu_search()
+
+    print(f"En iyi bulunan toplam maliyet: {best_cost:,.2f} $")
+    print("\nSeçilen rotalar (gemi → rota, ürün):")
+    for ship in ships: #her geminin seçilen rotasını yazdır
+        ridx, prod = best_solution.get(ship, (None, None))
+        if ridx is None:
+            print(f"  {ship}: IDLE (rota yok)") #rota yoksa gemi idle
+        else:
+            r = routes[ridx]
+            print(
+                f"  {ship}: {r['Route']} | Product={prod} | Stops={r['Stops']} | "
+                f"Duration={r['DurationDays']} gün | Cost={r['CostUSD']}"
+            )
+
+
+#total_cost, delivered_gas, delivered_diesel = evaluate_solution(best_solution)
+#print("\nLokasyon bazında gönderilen miktarlar (ton):")
+#for loc in sorted(total_demand.keys()):
+       # print(
+            #f"  {loc}: "
+            #f"Gas={delivered_gas[loc]:.1f}/{demand_gas[loc]}  |  " 
+            #f"Diesel={delivered_diesel[loc]:.1f}/{demand_diesel[loc]}"
+        #)
+
+
+
+        #“Gemilere rotaları ve ürünleri (gas/diesel) öyle dağıtayım ki toplam maliyet minimum olsun; bunu yaparken de komşu çözümler arasında dolaşayım ama sürekli aynı hamleleri tekrar edip dolaşmaya da düşmeyeyim (tabu listesiyle).”
