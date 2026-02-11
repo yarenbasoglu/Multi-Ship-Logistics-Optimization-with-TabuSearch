@@ -1,199 +1,23 @@
 from __future__ import annotations
 
-import csv
-import io
+import os
 import random
+import re
+import zipfile
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Optional, Set
 from copy import deepcopy
 
 # 1) CONSISTENT DATA
 
-LOCATIONS_CSV = """Location,Region,Product,Qty,DemandDay
-L1,North,gasoline,1100,5
-L2,North,gasoline,1200,7
-L3,North,diesel,900,12
-L4,North,diesel,1000,10
-L5,North,gasoline,1300,18
-L6,North,gasoline,1000,20
-L7,North,diesel,900,26
-L8,North,diesel,850,27
-L9,South,gasoline,1050,6
-L10,South,diesel,900,14
-L11,South,gasoline,1150,16
-L12,South,diesel,1000,17
-L13,South,diesel,850,22
-L14,South,gasoline,950,24
-L15,North,diesel,850,8
-L16,North,gasoline,1000,11
-L17,North,diesel,900,15
-L18,North,gasoline,950,19
-L19,North,diesel,800,23
-L20,North,gasoline,1050,24
-L21,South,gasoline,1000,9
-L22,South,diesel,950,13
-L23,South,gasoline,1100,18
-L24,South,diesel,900,28
-"""
+EXCEL_INPUT_PATH = "data_ship.xlsx"
+XML_NS = {
+    "a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+    "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+}
 
-SHIPS_CSV = """Ship,Ownership,ShipCapacity,FixedDailyCost
-S1,owned,2700,0
-S2,owned,2550,0
-S3,owned,2400,0
-S4,owned,2450,0
-S5,owned,2850,0
-S6,owned,2650,0
-S7,owned,2350,0
-S8,leased,2300,0
-S9,leased,2500,0
-S10,leased,2600,0
-"""
-
-# Depolar: MaxCap, MinCap, DailyDecay
-
-DEPOTS_CSV = """Depot,Region,MaxCap,MinCap,DailyDecay
-D_North,North,6000,1000,150
-D_South1,South,5000,800,120
-D_South2,South,5500,900,130
-"""
-
-ROUTES_CSV = """Route,Ship,StartPort,EndPort,Stops,DurationDays,CostUSD
-R1,S1,P1,P1,L1-L2,7,52000
-R2,S1,P1,P2,L1-L2,7,55500
-R3,S1,P2,P1,L1-L2,6,54500
-R4,S1,P2,P2,L1-L2,7,56500
-R5,S1,P1,P1,L5-L6,7,61000
-R6,S1,P1,P2,L5-L6,7,64500
-R7,S1,P2,P1,L5-L6,6,63500
-R8,S1,P2,P2,L5-L6,7,65500
-R9,S1,P1,P1,L3-L4,6,50000
-R10,S1,P2,P2,L7-L8,6,47000
-R11,S1,P1,P2,L9,5,43000
-R12,S1,P2,P1,L14,6,45500
-
-R13,S2,P1,P1,L1-L2,7,59000
-R14,S2,P1,P2,L1-L2,7,62500
-R15,S2,P2,P1,L1-L2,6,61500
-R16,S2,P2,P2,L1-L2,7,63500
-R17,S2,P1,P1,L5-L6,7,70000
-R18,S2,P1,P2,L5-L6,7,73500
-R19,S2,P2,P1,L5-L6,6,72500
-R20,S2,P2,P2,L5-L6,7,74500
-R21,S2,P1,P1,L3-L4,7,61000
-R22,S2,P2,P2,L3-L4,6,60000
-R23,S2,P1,P2,L10,6,51000
-R24,S2,P2,P1,L12,6,52000
-
-R25,S3,P1,P1,L3-L4,7,66000
-R26,S3,P1,P2,L3-L4,7,69500
-R27,S3,P2,P1,L3-L4,6,68500
-R28,S3,P2,P2,L3-L4,7,70500
-R29,S3,P1,P1,L7-L8,7,54000
-R30,S3,P1,P2,L7-L8,7,57500
-R31,S3,P2,P1,L7-L8,6,56500
-R32,S3,P2,P2,L7-L8,7,58500
-R33,S3,P1,P1,L9,5,47000
-R34,S3,P2,P2,L10,6,49500
-R35,S3,P1,P2,L11,6,50500
-R36,S3,P2,P1,L14,6,52000
-
-R37,S4,P1,P1,L7-L8,7,61000
-R38,S4,P1,P2,L7-L8,7,64500
-R39,S4,P2,P1,L7-L8,6,63500
-R40,S4,P2,P2,L7-L8,7,65500
-R41,S4,P1,P1,L10,6,52000
-R42,S4,P1,P2,L10,6,55500
-R43,S4,P2,P1,L10,5,54500
-R44,S4,P2,P2,L10,6,56500
-R45,S4,P1,P1,L11,6,54000
-R46,S4,P2,P2,L12,6,55000
-R47,S4,P1,P2,L13,5,50000
-R48,S4,P2,P1,L9,5,51000
-
-R49,S5,P1,P1,L1-L2,7,72000
-R50,S5,P1,P2,L1-L2,7,75500
-R51,S5,P2,P1,L1-L2,6,74500
-R52,S5,P2,P2,L1-L2,7,76500
-R53,S5,P1,P1,L5-L6,7,82000
-R54,S5,P1,P2,L5-L6,7,85500
-R55,S5,P2,P1,L5-L6,6,84500
-R56,S5,P2,P2,L5-L6,7,86500
-R57,S5,P1,P1,L3-L4,7,76000
-R58,S5,P2,P2,L3-L4,6,75000
-R59,S5,P1,P2,L7-L8,6,70000
-R60,S5,P2,P1,L14,6,68000
-
-R61,S6,P1,P1,L1-L2,7,56000
-R62,S6,P1,P2,L1-L2,7,59500
-R63,S6,P2,P1,L1-L2,6,58500
-R64,S6,P2,P2,L1-L2,7,60500
-R65,S6,P1,P1,L5-L6,7,64000
-R66,S6,P1,P2,L5-L6,7,67500
-R67,S6,P2,P1,L5-L6,6,66500
-R68,S6,P2,P2,L5-L6,7,68500
-R69,S6,P1,P1,L3-L4,7,60000
-R70,S6,P2,P2,L7-L8,6,57000
-R71,S6,P1,P2,L11,6,52000
-R72,S6,P2,P1,L12,6,53000
-
-R73,S7,P1,P1,L1-L2,7,50000
-R74,S7,P1,P2,L1-L2,7,53500
-R75,S7,P2,P1,L1-L2,6,52500
-R76,S7,P2,P2,L1-L2,7,54500
-R77,S7,P1,P1,L5-L6,7,59000
-R78,S7,P1,P2,L5-L6,7,62500
-R79,S7,P2,P1,L5-L6,6,61500
-R80,S7,P2,P2,L5-L6,7,63500
-R81,S7,P1,P1,L7-L8,7,46000
-R82,S7,P1,P2,L7-L8,7,49500
-R83,S7,P2,P1,L7-L8,6,48500
-R84,S7,P2,P2,L7-L8,7,50500
-
-R85,S8,P1,P1,L9,5,41000
-R86,S8,P1,P2,L9,5,44500
-R87,S8,P2,P1,L9,4,43500
-R88,S8,P2,P2,L9,5,45500
-R89,S8,P1,P1,L10,6,42000
-R90,S8,P1,P2,L11,6,44000
-R91,S8,P2,P2,L12,6,45000
-R92,S8,P2,P1,L13,5,40000
-R93,S8,P1,P1,L14,6,43000
-
-R97,S9,P1,P1,L1-L2,7,58000
-R98,S9,P1,P2,L3-L4,7,61000
-R99,S9,P2,P1,L3-L4,6,60000
-R100,S9,P2,P2,L7-L8,7,56000
-R101,S9,P1,P1,L5,6,52000
-R102,S9,P1,P2,L6,6,50500
-R103,S9,P2,P1,L9,5,50000
-R104,S9,P2,P2,L10,6,51500
-R105,S9,P1,P2,L11,6,53000
-R106,S9,P2,P1,L12,6,52500
-R107,S9,P1,P1,L13,5,48000
-R108,S9,P2,P2,L14,6,54000
-
-R117,S10,P1,P1,L3-L4,7,66000
-R118,S10,P2,P2,L7-L8,6,62000
-R119,S8,P1,P1,L15-L16,6,39000
-R120,S8,P2,P2,L17-L18,6,40000
-R121,S8,P1,P2,L19-L20,6,40500
-R122,S8,P1,P1,L21-L22,6,39500
-R123,S8,P2,P1,L23-L11,6,41000
-R124,S8,P1,P1,L24,5,38500
-R125,S9,P1,P1,L15-L16,6,42000
-R126,S9,P2,P2,L17-L18,6,43000
-R127,S9,P1,P2,L19-L20,6,43500
-R128,S9,P1,P1,L21-L22,6,42500
-R129,S9,P2,P1,L23-L11,6,44000
-R130,S9,P1,P1,L24,5,41500
-
-R131,S10,P1,P1,L15-L16,6,44000
-R132,S10,P2,P2,L17-L18,6,45000
-R133,S10,P1,P2,L19-L20,6,45500
-R134,S10,P1,P1,L21-L22,6,44500
-R135,S10,P2,P1,L23-L11,6,46000
-R136,S10,P1,P1,L24,5,43500
-"""
+BUSY_DAYS_BY_SHIP: Dict[str, Set[int]] = {}
 
 # 2) MODELS
 
@@ -238,83 +62,242 @@ Solution = Dict[str, Tuple[str, ...]]
 
 # 3) PARSING
 
-def parse_csv(text: str) -> List[Dict[str, str]]:
-    f = io.StringIO(text.strip())
-    reader = csv.DictReader(f)
-    rows: List[Dict[str, str]] = []
-    for row in reader:
-        if not row:
-            continue
-        first_key = next(iter(row.keys()))
-        if not row.get(first_key, "").strip():
-            continue
-        rows.append({k: (v.strip() if isinstance(v, str) else v) for k, v in row.items()})
-    return rows
+def normalize_code(raw: str) -> str:
+    return str(raw or "").strip().upper()
 
-def load_locations() -> Dict[str, Location]:
+def humanize_code(code: str) -> str:
+    v = normalize_code(code)
+    m = re.fullmatch(r"M(\d+)", v)
+    if m:
+        return f"Müşteri{m.group(1)}"
+    g = re.fullmatch(r"G(\d+)", v)
+    if g:
+        return f"Gemi{g.group(1)}"
+    l = re.fullmatch(r"L(\d+)", v)
+    if l:
+        return f"Liman{l.group(1)}"
+    d = re.fullmatch(r"D_L(\d+)", v)
+    if d:
+        return f"DepoLiman{d.group(1)}"
+    return code
+
+def safe_int(value: object, default: int = 0) -> int:
+    s = str(value or "").strip().replace(",", ".")
+    if not s:
+        return default
+    try:
+        return int(round(float(s)))
+    except ValueError:
+        return default
+
+def _xlsx_shared_strings(book: zipfile.ZipFile) -> List[str]:
+    if "xl/sharedStrings.xml" not in book.namelist():
+        return []
+    root = ET.fromstring(book.read("xl/sharedStrings.xml"))
+    items: List[str] = []
+    for si in root.findall("a:si", XML_NS):
+        parts = [t.text or "" for t in si.findall(".//a:t", XML_NS)]
+        items.append("".join(parts))
+    return items
+
+def _xlsx_sheet_paths(book: zipfile.ZipFile) -> Dict[str, str]:
+    wb = ET.fromstring(book.read("xl/workbook.xml"))
+    rels = ET.fromstring(book.read("xl/_rels/workbook.xml.rels"))
+    rel_map = {r.attrib["Id"]: r.attrib["Target"] for r in rels}
+    paths: Dict[str, str] = {}
+    for sheet in wb.findall("a:sheets/a:sheet", XML_NS):
+        rid = sheet.attrib["{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"]
+        paths[sheet.attrib["name"]] = "xl/" + rel_map[rid]
+    return paths
+
+def _xlsx_rows_as_dicts(path: str) -> Dict[str, List[Dict[str, str]]]:
+    out: Dict[str, List[Dict[str, str]]] = {}
+    with zipfile.ZipFile(path) as book:
+        sst = _xlsx_shared_strings(book)
+        sheet_paths = _xlsx_sheet_paths(book)
+
+        for name, sheet_path in sheet_paths.items():
+            root = ET.fromstring(book.read(sheet_path))
+            rows = root.findall(".//a:sheetData/a:row", XML_NS)
+            if not rows:
+                out[name] = []
+                continue
+
+            matrix: List[List[str]] = []
+            max_col = 0
+            for row in rows:
+                row_cells: Dict[int, str] = {}
+                for cell in row.findall("a:c", XML_NS):
+                    ref = cell.attrib.get("r", "")
+                    col_txt = "".join(ch for ch in ref if ch.isalpha())
+                    col_num = 0
+                    for ch in col_txt:
+                        col_num = col_num * 26 + (ord(ch.upper()) - 64)
+                    if col_num <= 0:
+                        continue
+                    max_col = max(max_col, col_num)
+                    t = cell.attrib.get("t")
+                    v = cell.find("a:v", XML_NS)
+                    value = ""
+                    if v is not None and v.text is not None:
+                        value = v.text
+                        if t == "s":
+                            idx = int(value)
+                            value = sst[idx] if 0 <= idx < len(sst) else ""
+                    row_cells[col_num] = value
+                row_values = [row_cells.get(i, "").strip() for i in range(1, max_col + 1)]
+                matrix.append(row_values)
+
+            if not matrix:
+                out[name] = []
+                continue
+            headers = [h.strip() or f"COL_{i+1}" for i, h in enumerate(matrix[0])]
+            data: List[Dict[str, str]] = []
+            for r in matrix[1:]:
+                record: Dict[str, str] = {}
+                for i, h in enumerate(headers):
+                    record[h] = r[i] if i < len(r) else ""
+                if any(v.strip() for v in record.values()):
+                    data.append(record)
+            out[name] = data
+    return out
+
+def load_from_excel(path: str) -> Tuple[Dict[str, Location], Dict[str, Ship], Dict[str, Depot], Dict[str, Route], Dict[str, Set[int]]]:
+    sheets = _xlsx_rows_as_dicts(path)
+
+    raw_demand = sheets.get("Musteri_Talepleri", [])
+    if not raw_demand:
+        raise ValueError("Musteri_Talepleri sayfasi bos veya bulunamadi.")
+
+    customer_cols = [c for c in raw_demand[0].keys() if normalize_code(c).startswith("M")]
+    customer_cols = sorted(customer_cols, key=lambda x: safe_int(re.sub(r"[^0-9]", "", x), 999))
+    if not customer_cols:
+        raise ValueError("Musteri_Talepleri sayfasinda musteri kolonu bulunamadi.")
+
+    customers_by_half = max(1, len(customer_cols) // 2)
     locs: Dict[str, Location] = {}
-    for r in parse_csv(LOCATIONS_CSV):
-        loc = Location(
-            loc=r["Location"],
-            region=r["Region"],
-            product=r["Product"],
-            qty=int(r["Qty"]),
-            demand_day=int(r["DemandDay"]),
-        )
-        locs[loc.loc] = loc
-    return locs
+    for idx, raw_c in enumerate(customer_cols):
+        c = normalize_code(raw_c)
+        day_values: List[Tuple[int, int]] = []
+        for row in raw_demand:
+            day = safe_int(row.get("Gun", row.get("Gün", "")), 0)
+            qty = safe_int(row.get(raw_c, "0"), 0)
+            if day > 0:
+                day_values.append((day, qty))
+        non_zero = [(d, q) for d, q in day_values if q > 0]
+        demand_day = non_zero[0][0] if non_zero else 18
+        qty = max((q for _, q in non_zero), default=0)
+        region = "North" if idx < customers_by_half else "South"
+        locs[c] = Location(loc=c, region=region, product="mixed", qty=max(1, qty), demand_day=demand_day)
 
-def load_ships() -> Dict[str, Ship]:
+    raw_ships = sheets.get("Kapasite", [])
+    if not raw_ships:
+        raise ValueError("Kapasite sayfasi bos veya bulunamadi.")
     ships: Dict[str, Ship] = {}
-    for r in parse_csv(SHIPS_CSV):
-        s = Ship(
-            ship_id=r["Ship"],
-            ownership=r["Ownership"],
-            capacity=int(r["ShipCapacity"]),
-            fixed_daily_cost=int(r["FixedDailyCost"]),
-        )
-        ships[s.ship_id] = s
-    return ships
+    for row in raw_ships:
+        sid = normalize_code(row.get("Gemi", ""))
+        cap = safe_int(row.get("Kapasite", "0"), 0)
+        if not sid or cap <= 0:
+            continue
+        ships[sid] = Ship(ship_id=sid, ownership="owned", capacity=cap, fixed_daily_cost=0)
+    if not ships:
+        raise ValueError("Kapasite sayfasindan gecerli gemi okunamadi.")
 
-def load_depots() -> Dict[str, Depot]:
+    raw_refinery = sheets.get("Rafineri Talebi", [])
+    port_demand: Dict[str, int] = {}
+    for row in raw_refinery:
+        p = normalize_code(row.get("Varis", ""))
+        if p.startswith("L"):
+            port_demand[p] = port_demand.get(p, 0) + max(0, safe_int(row.get("Talep", "0"), 0))
+
+    ports: List[str] = []
+    for row in raw_ships:
+        p = normalize_code(row.get("Lokasyon", ""))
+        if p.startswith("L") and p not in ports:
+            ports.append(p)
+    if not ports:
+        ports = ["L1", "L2"]
+
     depots: Dict[str, Depot] = {}
-    for r in parse_csv(DEPOTS_CSV):
-        d = Depot(
-            depot=r["Depot"],
-            region=r["Region"],
-            max_cap=int(r["MaxCap"]),
-            min_cap=int(r["MinCap"]),
-            daily_decay=int(r["DailyDecay"]),
+    for idx, p in enumerate(ports):
+        depot_id = f"D_{p}"
+        region = "North" if idx == 0 else "South"
+        max_cap = max(10000, port_demand.get(p, 0) + 5000)
+        depots[depot_id] = Depot(
+            depot=depot_id,
+            region=region,
+            max_cap=max_cap,
+            min_cap=0,
+            daily_decay=0,
         )
-        depots[d.depot] = d
-    return depots
 
-def load_routes(locs: Dict[str, Location]) -> Dict[str, Route]:
+    raw_routes = sheets.get("Gun_Maliyet", [])
+    if not raw_routes:
+        raise ValueError("Gun_Maliyet sayfasi bos veya bulunamadi.")
     routes: Dict[str, Route] = {}
-    for r in parse_csv(ROUTES_CSV):
-        rid = r["Route"]
-        sid = r["Ship"]
-        stops = tuple(s.strip() for s in r["Stops"].split("-") if s.strip())
-        duration = int(r["DurationDays"])
-        cost = int(r["CostUSD"])
+    route_no = 1
+    for row in raw_routes:
+        if safe_int(row.get("Mumkun", "0"), 0) != 1:
+            continue
+        sid = normalize_code(row.get("g", ""))
+        if sid not in ships:
+            continue
+        start_port = normalize_code(row.get("i", "L1")) or "L1"
+        end_port = normalize_code(row.get("o", start_port)) or start_port
+
+        stop_candidates = [normalize_code(row.get("j", "")), normalize_code(row.get("k", ""))]
+        stops: List[str] = []
+        for s in stop_candidates:
+            if s.startswith("M") and s in locs and s not in stops:
+                stops.append(s)
+        if not stops:
+            continue
+
+        day_points = [
+            safe_int(row.get("Gun1", "0"), 0),
+            safe_int(row.get("Gun2", "0"), 0),
+            safe_int(row.get("Gun3", "0"), 0),
+        ]
+        day_points = [d for d in day_points if d > 0]
+        if day_points:
+            duration = max(1, max(day_points) - min(day_points) + 1)
+        else:
+            duration = 1
+        cost = max(1, safe_int(row.get("Maliyet", "1"), 1))
 
         stop_regions = {locs[s].region for s in stops}
         region = stop_regions.pop() if len(stop_regions) == 1 else "MIXED"
         demand_tons = sum(locs[s].qty for s in stops)
+        rid = f"X{route_no}"
+        route_no += 1
 
         routes[rid] = Route(
             route_id=rid,
             ship_id=sid,
-            start_port=r["StartPort"],
-            end_port=r["EndPort"],
-            stops=stops,
+            start_port=start_port,
+            end_port=end_port,
+            stops=tuple(stops),
             duration=duration,
             cost=cost,
             region=region,
             demand_tons=demand_tons,
-            is_depot_delivery=False
+            is_depot_delivery=False,
         )
-    return routes
+    if not routes:
+        raise ValueError("Gun_Maliyet sayfasindan gecerli rota okunamadi.")
+
+    busy_days: Dict[str, Set[int]] = {}
+    raw_busy = sheets.get("Mesguliyetler", [])
+    for row in raw_busy:
+        day = safe_int(row.get("Gun", row.get("Gün", "")), 0)
+        if day <= 0:
+            continue
+        for col, value in row.items():
+            sid = normalize_code(col)
+            if sid.startswith("G") and safe_int(value, 0) == 1:
+                busy_days.setdefault(sid, set()).add(day)
+
+    return locs, ships, depots, routes, busy_days
 
 
 # 3.5) DYNAMIC DEPOT ROUTE GENERATION
@@ -336,12 +319,9 @@ def generate_depot_routes(
         if r.demand_tons >= ship.capacity:
             continue
         
-        target_depots = []
-        if r.region == "North":
-            target_depots.append(depots["D_North"])
-        elif r.region == "South":
-            target_depots.append(depots["D_South1"])
-            target_depots.append(depots["D_South2"])
+        target_depots = [d for d in depots.values() if d.region == r.region]
+        if not target_depots:
+            target_depots = list(depots.values())
             
         for d in target_depots:
             new_id = f"{rid}_{d.depot}"
@@ -426,6 +406,7 @@ def schedule_trips_backtracking( #sıralama
     ship: Ship,
     routes: Dict[str, Route],
     locs: Dict[str, Location],
+    prefer_latest: bool = True,
 ) -> Optional[Dict[str, int]]:
     items = []
     for rid in route_ids:
@@ -439,7 +420,32 @@ def schedule_trips_backtracking( #sıralama
     items.sort(key=lambda x: ((x[2] - x[1]), x[2]))
     chosen: Dict[str, int] = {}
 
-    def dfs(idx: int, current_time: int) -> bool: #yerleştirme
+    busy_days = BUSY_DAYS_BY_SHIP.get(ship.ship_id, set())
+
+    if prefer_latest:
+        rev_items = list(reversed(items))
+
+        def dfs_latest(idx: int, latest_end: int) -> bool:
+            if idx == len(rev_items):
+                return True
+            rid, lo, hi, dur = rev_items[idx]
+            start_max = min(hi, latest_end - dur + 1)
+            for start in range(start_max, lo - 1, -1):
+                end_day = start + dur - 1
+                if end_day > 35:
+                    continue
+                blocked = any(d in busy_days for d in range(start, end_day + 1))
+                if blocked:
+                    continue
+                chosen[rid] = start
+                if dfs_latest(idx + 1, start - 1):
+                    return True
+                del chosen[rid]
+            return False
+
+        return chosen if dfs_latest(0, 35) else None
+
+    def dfs_earliest(idx: int, current_time: int) -> bool:
         if idx == len(items):
             return True
         rid, lo, hi, dur = items[idx]
@@ -448,13 +454,16 @@ def schedule_trips_backtracking( #sıralama
             end_day = start + dur - 1
             if end_day > 35:
                 continue
+            blocked = any(d in busy_days for d in range(start, end_day + 1))
+            if blocked:
+                continue
             chosen[rid] = start
-            if dfs(idx + 1, end_day + 1):
+            if dfs_earliest(idx + 1, end_day + 1):
                 return True
             del chosen[rid]
         return False
 
-    return chosen if dfs(0, 1) else None
+    return chosen if dfs_earliest(0, 1) else None
 
 
 # 7) EVALUATION
@@ -468,8 +477,8 @@ def evaluate(
     locs: Dict[str, Location],
     depots: Dict[str, Depot],
     cfg: ConstraintConfig,
-    rental_income_if_idle_ge_5: int = 1500, # #5 günden fazla boşta kalırsa günlük kira geliri
-    idle_penalty_if_idle_lt_5: int = 1000,#5 günden az boşta kalırsa günlük ceza
+    rental_income_if_idle_ge_5: int = 0, # #5 günden fazla boşta kalırsa günlük kira geliri
+    idle_penalty_if_idle_lt_5: int = 100,#5 günden az boşta kalırsa günlük ceza
 ) -> Tuple[int, Dict]:
 
     violations: List[str] = []
@@ -527,7 +536,7 @@ def evaluate(
             total_cost -= rental_income_if_idle_ge_5 * idle
 
         if cfg.enforce_time_window_pm2: 
-            sched = schedule_trips_backtracking(trip_list, ship, routes, locs)
+            sched = schedule_trips_backtracking(trip_list, ship, routes, locs, prefer_latest=True)
             if sched is None:
                 violations.append(f"{ship_id}: cannot schedule trips within ±2 windows")
             else:
@@ -549,7 +558,7 @@ def evaluate(
             for rid, start_day in sched.items():
                 r = routes[rid]
                 if r.is_depot_delivery:
-                    amount = ships[sid].capacity - r.demand_tons
+                    amount = max(0, ships[sid].capacity - r.demand_tons)
                     target_depot = None
                     for s in r.stops:
                         if s in depots:
@@ -601,21 +610,80 @@ def routes_by_ship(routes: Dict[str, Route]) -> Dict[str, List[str]]:
 #lokasyon
 def route_covers(routes: Dict[str, Route]) -> Dict[str, Set[str]]:
     return {rid: set(routes[rid].stops) for rid in routes.keys()}
+
+def depot_risk_by_region(day: int, depots: Dict[str, Depot]) -> Dict[str, float]:
+    risk: Dict[str, float] = {}
+    for d in depots.values():
+        if d.daily_decay <= 0:
+            continue
+        projected = d.max_cap - d.daily_decay * day
+        days_to_min = (projected - d.min_cap) / d.daily_decay
+        # <=5 gun kaldiysa risk hizla artsin
+        local_risk = max(0.0, 6.0 - days_to_min)
+        if local_risk <= 0:
+            continue
+        risk[d.region] = max(risk.get(d.region, 0.0), local_risk)
+    return risk
+
+def customer_urgency_score(loc: Location, day: int, region_risk: Dict[str, float]) -> float:
+    slack = (loc.demand_day + 2) - day
+    overdue = max(0, day - (loc.demand_day + 2))
+    near_window = max(0, 6 - max(0, slack))
+    qty_bonus = min(20.0, loc.qty / 1000.0)
+    depot_bonus = 8.0 * region_risk.get(loc.region, 0.0)
+    return 100.0 * overdue + 12.0 * near_window + qty_bonus + depot_bonus
+
+def build_event_driven_order(
+    locs: Dict[str, Location],
+    depots: Dict[str, Depot],
+    uncovered: Set[str],
+) -> List[str]:
+    # 1) Event-driven simulation: gun gun ilerleyip acil musterileri one al.
+    ordered: List[str] = []
+    seen: Set[str] = set()
+    for day in range(1, 36):
+        if len(seen) == len(uncovered):
+            break
+        region_risk = depot_risk_by_region(day, depots)
+        day_candidates = sorted(
+            (lid for lid in uncovered if lid not in seen),
+            key=lambda lid: (
+                -customer_urgency_score(locs[lid], day, region_risk),
+                abs(locs[lid].demand_day - day),
+            ),
+        )
+        for lid in day_candidates:
+            if lid not in seen:
+                seen.add(lid)
+                ordered.append(lid)
+    for lid in sorted(uncovered, key=lambda x: int(re.sub(r"[^0-9]", "", x) or "0")):
+        if lid not in seen:
+            ordered.append(lid)
+    return ordered
+
 #başlangıç çözümü oluşturma
 def build_initial_solution_greedy_randomized(
     ships: Dict[str, Ship],
     routes: Dict[str, Route],
+    depots: Dict[str, Depot],
     locs: Dict[str, Location],
     cfg: ConstraintConfig,
     rcl_size: int = 5 #en ucuz 5 rotadan rastgele seçim yap
 ) -> Solution:
+    # Event-driven simulation + time-window feasibility + backward scheduling
     customer_routes = {rid: r for rid, r in routes.items() if not r.is_depot_delivery}
     covers = route_covers(customer_routes)
+    routes_by_loc: Dict[str, List[str]] = {
+        loc: sorted(
+            [rid for rid, cv in covers.items() if loc in cv],
+            key=lambda rid: customer_routes[rid].cost
+        )
+        for loc in locs.keys()
+    }
     
     sol: Solution = {sid: tuple() for sid in ships.keys()}
     used_routes: Set[str] = set()
     uncovered: Set[str] = set(locs.keys())
-    all_route_ids = sorted(customer_routes.keys(), key=lambda rid: customer_routes[rid].cost)
 #tek tek kısıtlar kontrol edilerek rota ekleme fonk
     def can_add_trip(ship_id: str, rid: str) -> bool:
         r = routes[rid]
@@ -630,34 +698,68 @@ def build_initial_solution_greedy_randomized(
         new_list = current + (rid,)
         total_dur = sum(routes[x].duration for x in new_list)
         if cfg.enforce_total_duration_le_35 and total_dur > 35: return False
-        
+
+        # 2) Time window scheduling: her rota pencere icine dusebilmeli.
         if cfg.enforce_time_window_pm2:
-            if schedule_trips_backtracking(new_list, ship, routes, locs) is None:
+            for x in new_list:
+                if not feasible_service_days_for_route(routes[x], locs):
+                    return False
+
+        # 3) Backward scheduling: rotalari en gec yerlestirip paketlenebilirlik kontrolu.
+        if cfg.enforce_time_window_pm2:
+            if schedule_trips_backtracking(new_list, ship, routes, locs, prefer_latest=True) is None:
                 return False
         return True
 
-    for _ in range(400):
-        if not uncovered: break
-        target_loc = next(iter(uncovered))
-        candidates = []
-#bu lokasyonu kapsayan rotaları bul
-        for rid in all_route_ids:
-            if target_loc not in covers[rid]: continue
-            if rid in used_routes: continue
+    # 1) Event-driven simulation sonucunda aciliyet sirasi
+    priority_order = build_event_driven_order(locs, depots, uncovered)
+
+    # 4) Greedy: uygun rotalari maliyete gore sirala, en ucuz k icinden rastgele sec.
+    for target_loc in priority_order:
+        if target_loc not in uncovered:
+            continue
+        candidates: List[Tuple[str, str]] = []
+        for rid in routes_by_loc.get(target_loc, []):
+            if rid in used_routes:
+                continue
             sid = routes[rid].ship_id
             if can_add_trip(sid, rid):
                 candidates.append((rid, sid))
-        
         if not candidates:
-            uncovered.remove(target_loc)
             continue
-
-        top_candidates = candidates[:rcl_size] #en ucuz rcl_size kadar rota alınır
+        top_candidates = candidates[:rcl_size]
         chosen_rid, chosen_sid = random.choice(top_candidates)
-
         sol[chosen_sid] = sol[chosen_sid] + (chosen_rid,)
         used_routes.add(chosen_rid)
         uncovered -= covers[chosen_rid]
+
+    # 2) Tamamlama passi: kalan musteriler icin en dar opsiyonlardan doldur.
+    max_rounds = max(200, len(locs) * 30)
+    for _ in range(max_rounds):
+        if not uncovered:
+            break
+        progress = False
+        hardest_first = sorted(uncovered, key=lambda l: len(routes_by_loc.get(l, [])))
+        for target_loc in hardest_first:
+            candidates: List[Tuple[str, str]] = []
+            for rid in routes_by_loc.get(target_loc, []):
+                if rid in used_routes:
+                    continue
+                sid = routes[rid].ship_id
+                if can_add_trip(sid, rid):
+                    candidates.append((rid, sid))
+            if not candidates:
+                continue
+            top_candidates = candidates[:rcl_size]
+            chosen_rid, chosen_sid = random.choice(top_candidates)
+            sol[chosen_sid] = sol[chosen_sid] + (chosen_rid,)
+            used_routes.add(chosen_rid)
+            uncovered -= covers[chosen_rid]
+            progress = True
+            if not uncovered:
+                break
+        if not progress:
+            break
 
     return sol
 
@@ -677,7 +779,7 @@ def tabu_search_multi_trip(
     by_ship = routes_by_ship(routes)
     ship_ids = list(ships.keys())
 
-    current = build_initial_solution_greedy_randomized(ships, routes, locs, cfg, rcl_size=5)
+    current = build_initial_solution_greedy_randomized(ships, routes, depots, locs, cfg, rcl_size=5)
     best = dict(current)
 
     best_obj, best_dbg = evaluate(best, ships, routes, locs, depots, cfg)
@@ -764,6 +866,8 @@ def tabu_search_multi_trip(
             if move_info is None: continue 
             
             cand_obj, cand_dbg = evaluate(cand, ships, routes, locs, depots, cfg)
+            if cfg.enforce_cover_all_locations and cand_dbg["served_count"] < len(locs):
+                continue
             
             if is_tabu(*move_info): #tabu- konrolü , maliyet mevcut en iyi çözümden daha iyi değilse atla
                 if cand_obj >= best_obj: continue 
@@ -785,7 +889,7 @@ def tabu_search_multi_trip(
         if it % 120 == 0:
             print(
                 f"iter={it:4d} best_obj={best_obj:,} cur_obj={cur_obj:,} "
-                f"viol={best_dbg['violations_count']} served={best_dbg['served_count']}/24"
+                f"viol={best_dbg['violations_count']} served={best_dbg['served_count']}/{len(locs)}"
             )
 
     return best, best_obj, best_dbg
@@ -793,35 +897,43 @@ def tabu_search_multi_trip(
 
 # 9) PRINTING
 
-def pretty_print_solution(sol: Solution, routes: Dict[str, Route], dbg: Dict):
+def pretty_print_solution(sol: Solution, routes: Dict[str, Route], dbg: Dict, total_locations: int):
     print("\nBEST OBJ:", f"{dbg['total_cost']:,}")
     print("violations:", dbg["violations_count"])
-    print("served:", f"{dbg['served_count']}/24")
+    print("served:", f"{dbg['served_count']}/{total_locations}")
     
     print("\n=== SOLUTION (Ship -> trips) ===")
     sched = dbg.get("ship_schedules", {})
     for sid in sorted(sol.keys(), key=lambda x: int(x[1:])):
         trips = sol[sid]
         if not trips:
-            print(f"{sid}: []")
+            print(f"{humanize_code(sid)}: []")
             continue
         parts = []
         for rid in trips:
             r = routes[rid]
             day = sched.get(sid, {}).get(rid, None)
             extra = " [DEPOT]" if r.is_depot_delivery else ""
-            parts.append(f"{rid}(stops={r.stops},cost={r.cost},day={day}{extra})")
-        print(f"{sid}: " + "  ".join(parts))
+            stops_txt = tuple(humanize_code(s) for s in r.stops)
+            parts.append(f"{rid}(stops={stops_txt},cost={r.cost},day={day}{extra})")
+        print(f"{humanize_code(sid)}: " + "  ".join(parts))
 
 
 # 10) RUN
 
 def main():
-    locs = load_locations()
-    ships = load_ships()
-    depots = load_depots()
-    # Temel rotaları yükle
-    base_routes = load_routes(locs)
+    global BUSY_DAYS_BY_SHIP
+
+    if not os.path.exists(EXCEL_INPUT_PATH):
+        raise FileNotFoundError(
+            f"Excel veri dosyasi bulunamadi: {EXCEL_INPUT_PATH}. "
+            "Bu uygulama sadece Excel verisi ile calisacak sekilde ayarlandi."
+        )
+
+    locs, ships, depots, base_routes, BUSY_DAYS_BY_SHIP = load_from_excel(EXCEL_INPUT_PATH)
+    print(f"[DATA] Excel yüklendi: {EXCEL_INPUT_PATH}")
+    print(f"[DATA] Musteri={len(locs)} Gemi={len(ships)} Rota={len(base_routes)}")
+
     # Depo rotalarını üret ve ekle
     new_depot_routes = generate_depot_routes(ships, base_routes, depots, locs)
     base_routes.update(new_depot_routes)
@@ -830,7 +942,8 @@ def main():
         enforce_duration_le_7=True,
         enforce_max_2_stops=True,
         enforce_ship_route_region_match=False,
-        enforce_capacity=True,
+        # Excel'de rota bazli tasinan ton bilgisi olmadigi icin kapasiteyi burada zorlamiyoruz.
+        enforce_capacity=False,
         enforce_total_duration_le_35=True,
         enforce_unique_route_globally=True,
         enforce_cover_all_locations=True,
@@ -881,7 +994,7 @@ def main():
     print("=" * 70)
     
     # En iyi sonucu detaylı yazdır
-    pretty_print_solution(global_best_sol, base_routes, global_best_dbg)
+    pretty_print_solution(global_best_sol, base_routes, global_best_dbg, total_locations=len(locs))
     print("\nAUTO POST-OPT: no improvement found.")
 
 if __name__ == "__main__":
