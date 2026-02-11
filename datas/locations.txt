@@ -1,0 +1,15 @@
+Location,Region,Product,Qty,DemandDay
+L1,North,gasoline,1100,5
+L2,North,gasoline,1200,7
+L3,North,diesel,900,12
+L4,North,diesel,1000,10
+L5,North,gasoline,1300,18
+L6,North,gasoline,1000,20
+L7,North,diesel,900,26
+L8,North,diesel,850,27
+L9,South,gasoline,1050,6
+L10,South,diesel,900,14
+L11,South,gasoline,1150,16
+L12,South,diesel,1000,17
+L13,South,diesel,850,22
+L14,South,gasoline,950,24

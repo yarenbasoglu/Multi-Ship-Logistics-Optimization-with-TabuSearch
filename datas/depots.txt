@@ -1,0 +1,4 @@
+Depot,Region,I0_gas,I0_diesel,Target_gas,Target_diesel
+D_N,North,2000,2000,1500,1500
+D_S1,South,2500,1500,1800,1200
+D_S2,South,1500,2500,1200,1800

@@ -1,0 +1,168 @@
+import csv
+import io
+import random
+import copy
+from collections import defaultdict
+
+# =================================================================
+# 1. VERİ SETİ TANIMLAMALARI
+# =================================================================
+
+ships_data = [
+    ("S1","owned",2500), ("S2","owned",2300), ("S3","owned",2100),
+    ("S4","owned",1900), ("S5","owned",2600), ("S6","owned",2400),
+    ("S7","owned",2300), ("S8","leased",1300), ("S9","leased",2000),
+    ("S10","leased",2200),
+]
+
+locations_data = [
+    ("L1","North","gasoline",1100,5), ("L2","North","gasoline",1200,7),
+    ("L3","North","diesel",900,12), ("L4","North","diesel",1000,10),
+    ("L5","North","gasoline",1300,18), ("L6","North","gasoline",1000,20),
+    ("L7","North","diesel",900,26), ("L8","North","diesel",850,27),
+    ("L9","South","gasoline",1050,6), ("L10","South","diesel",900,14),
+    ("L11","South","gasoline",1150,16), ("L12","South","diesel",1000,17),
+    ("L13","South","diesel",850,22), ("L14","South","gasoline",950,24),
+]
+
+ship_info = {s[0]: {"type": s[1], "cap": s[2]} for s in ships_data}
+loc_info = {l[0]: {"reg": l[1], "qty": l[3], "day": l[4]} for l in locations_data}
+
+# =================================================================
+# 2. DİNAMİK ROTA ÜRETİCİ (±2 GÜN ESNEKLİĞİ)
+# =================================================================
+
+def generate_optimized_routes():
+    all_routes = []
+    loc_names = list(loc_info.keys())
+
+    for i in range(len(loc_names)):
+        for j in range(i, len(loc_names)):
+            l1, l2 = loc_names[i], loc_names[j]
+            
+            # Bölge Kontrolü
+            if loc_info[l1]['reg'] != loc_info[l2]['reg']: continue
+            
+            # ±2 gün penceresi kesişimi kontrolü
+            w1 = (loc_info[l1]['day'] - 2, loc_info[l1]['day'] + 2)
+            w2 = (loc_info[l2]['day'] - 2, loc_info[l2]['day'] + 2)
+            start_int = max(w1[0], w2[0])
+            end_int = min(w1[1], w2[1])
+
+            if start_int <= end_int:
+                service_day = (start_int + end_int) // 2
+                stops = [l1] if i == j else [l1, l2]
+                total_qty = sum(loc_info[s]['qty'] for s in stops)
+                
+                for s_id, s_val in ship_info.items():
+                    if total_qty <= s_val['cap']:
+                        cost = 48000 if i == j else 58000
+                        all_routes.append({
+                            "Ship": s_id,
+                            "Stops": stops,
+                            "Qty": total_qty,
+                            "Day": service_day,
+                            "Duration": 6 if i == j else 7,
+                            "Cost": cost,
+                            "Region": loc_info[l1]['reg']
+                        })
+    return all_routes
+
+ALL_ROUTES = generate_optimized_routes()
+
+# =================================================================
+# 3. TABU SEARCH ALGORİTMASI
+# =================================================================
+
+def evaluate_solution(sol):
+    total_cost = 0
+    covered_locs = set()
+    
+    for s_id, r_indices in sol.items():
+        ship_days = 0
+        ship_reg = None
+        
+        if len(r_indices) > 2: total_cost += 1e7
+        
+        for idx in r_indices:
+            route = ALL_ROUTES[idx]
+            if ship_reg and route['Region'] != ship_reg: total_cost += 1e7
+            ship_reg = route['Region']
+            
+            ship_days += route['Duration']
+            total_cost += route['Cost']
+            for s in route['Stops']: covered_locs.add(s)
+
+        idle_time = 35 - ship_days
+        if ship_days > 35: 
+            total_cost += 2e7 
+        elif idle_time >= 5: 
+            total_cost -= 15000 # Kira geliri bonusu
+        else: 
+            total_cost += 10000 # Idle penalty
+            
+    missing = len(loc_info) - len(covered_locs)
+    total_cost += missing * 500000
+    return total_cost
+
+def get_neighbors(sol):
+    neighbors = []
+    for _ in range(15):
+        new_sol = copy.deepcopy(sol)
+        s1, s2 = random.sample(list(ship_info.keys()), 2)
+        if new_sol[s1]:
+            r = new_sol[s1].pop(random.randrange(len(new_sol[s1])))
+            new_sol[s2].append(r)
+        neighbors.append(new_sol)
+    return neighbors
+
+def tabu_search(max_iter=500):
+    current_sol = {s: [] for s in ship_info}
+    # Başlangıç için rastgele atama
+    for i in range(14):
+        s_id = list(ship_info.keys())[i % 10]
+        possible = [idx for idx, r in enumerate(ALL_ROUTES) if r['Ship'] == s_id]
+        if possible: current_sol[s_id].append(random.choice(possible))
+
+    best_sol = copy.deepcopy(current_sol)
+    best_score = evaluate_solution(best_sol)
+    tabu_list = []
+
+    for _ in range(max_iter):
+        neighbors = get_neighbors(current_sol)
+        next_sol = min(neighbors, key=evaluate_solution)
+        
+        if str(next_sol) not in tabu_list:
+            current_sol = next_sol
+            tabu_list.append(str(next_sol))
+            if len(tabu_list) > 20: tabu_list.pop(0)
+            
+            score = evaluate_solution(current_sol)
+            if score < best_score:
+                best_sol = copy.deepcopy(current_sol)
+                best_score = score
+    return best_sol, best_score
+
+# =================================================================
+# 4. ÇIKTI VE RAPORLAMA
+# =================================================================
+
+best_plan, min_cost = tabu_search()
+
+print("\n" + "="*80)
+print(f"{'GEMİ':<6} | {'BÖLGE':<7} | {'SERVİS GÜNÜ':<12} | {'DURAKLAR':<18} | {'DURUM'}")
+print("-" * 80)
+
+for s_id, r_indices in best_plan.items():
+    if not r_indices:
+        print(f"{s_id:<6} | {'-':<7} | {'-':<12} | {'BOŞTA':<18} | +15.000 (Kiralandı)")
+        continue
+    
+    for idx in r_indices:
+        r = ALL_ROUTES[idx]
+        stops_str = ", ".join(r['Stops'])
+        print(f"{s_id:<6} | {r['Region']:<7} | {r['Day']:<12} | {stops_str:<18} | {r['Duration']} Gün Seyir")
+
+print("-" * 80)
+print(f"TOPLAM MİNİMUM MALİYET: {min_cost:,.2f} USD")
+print("="*80 + "\n")

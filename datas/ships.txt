@@ -1,0 +1,11 @@
+Ship,Ownership,ShipCapacity,FixedDailyCost
+S1,owned,2500,0
+S2,owned,2300,0
+S3,owned,2100,0
+S4,owned,1900,0
+S5,owned,2600,0
+S6,owned,2400,0
+S7,owned,2300,0
+S8,leased,1300,0
+S9,leased,2000,0
+S10,leased,2200,0
