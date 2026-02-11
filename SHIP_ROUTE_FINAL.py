@@ -774,12 +774,16 @@ def tabu_search_multi_trip(
     tabu_tenure: int = 24,
     seed: int = 11,
     max_trips_per_ship: int = 9,
+    initial_solution: Optional[Solution] = None,
 ):
     random.seed(seed)
     by_ship = routes_by_ship(routes)
     ship_ids = list(ships.keys())
 
-    current = build_initial_solution_greedy_randomized(ships, routes, depots, locs, cfg, rcl_size=5)
+    if initial_solution is None:
+        current = build_initial_solution_greedy_randomized(ships, routes, depots, locs, cfg, rcl_size=5)
+    else:
+        current = dict(initial_solution)
     best = dict(current)
 
     best_obj, best_dbg = evaluate(best, ships, routes, locs, depots, cfg)
@@ -968,7 +972,18 @@ def main():
         print("-" * 30)
         
         # Her tur için rotaların temiz bir kopyasını al
-        routes_copy = deepcopy(base_routes) 
+        routes_copy = deepcopy(base_routes)
+
+        # Tabu'suz baslangic cozumunu olustur ve raporla
+        random.seed(seed)
+        initial_sol = build_initial_solution_greedy_randomized(
+            ships, routes_copy, depots, locs, cfg, rcl_size=5
+        )
+        initial_obj, initial_dbg = evaluate(initial_sol, ships, routes_copy, locs, depots, cfg)
+        print(
+            f"Tabu'suz: obj={initial_obj:,} viol={initial_dbg['violations_count']} "
+            f"served={initial_dbg['served_count']}/{len(locs)}"
+        )
         
         # Algoritmayı çalıştır
         best_sol, best_obj, dbg = tabu_search_multi_trip(
@@ -977,7 +992,13 @@ def main():
             neighborhood_size=200, 
             tabu_tenure=20, 
             seed=seed,
-            max_trips_per_ship=9
+            max_trips_per_ship=9,
+            initial_solution=initial_sol,
+        )
+        gain = initial_obj - best_obj
+        print(
+            f"Tabu sonrasi: obj={best_obj:,} viol={dbg['violations_count']} "
+            f"served={dbg['served_count']}/{len(locs)} iyilesme={gain:,}"
         )
         
         print(f"\n🏁 Run {i+1} Result: {best_obj:,}")
