@@ -11,13 +11,16 @@ from copy import deepcopy
 
 # 1) CONSISTENT DATA
 
-EXCEL_INPUT_PATH = "data_ship.xlsx"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+EXCEL_INPUT_PATH = os.path.join(BASE_DIR, "data_ship.xlsx")
 XML_NS = {
     "a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
     "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
 }
 
 BUSY_DAYS_BY_SHIP: Dict[str, Set[int]] = {}
+SHOW_EXCEL_DEBUG_OUTPUT = True
+EXCEL_PREVIEW_ROWS = 5
 
 # 2) MODELS
 
@@ -43,6 +46,7 @@ class Depot:
     max_cap: int
     min_cap: int
     daily_decay: int
+    initial_level: int = 0
     
 @dataclass(frozen=True)
 class Route:
@@ -218,18 +222,82 @@ def load_from_excel(path: str) -> Tuple[Dict[str, Location], Dict[str, Ship], Di
     if not ports:
         ports = ["L1", "L2"]
 
+
+    # --- DEPOTS (from Excel) ---
+    # Expected sheets: "Max Stock", "Safety Stock", "Initial Stock", "Tuketim"
     depots: Dict[str, Depot] = {}
-    for idx, p in enumerate(ports):
-        depot_id = f"D_{p}"
-        region = "North" if idx == 0 else "South"
-        max_cap = max(10000, port_demand.get(p, 0) + 5000)
-        depots[depot_id] = Depot(
-            depot=depot_id,
-            region=region,
-            max_cap=max_cap,
-            min_cap=0,
-            daily_decay=0,
-        )
+
+    def _read_depot_table(sheet_name: str) -> Dict[str, Dict[str, int]]:
+        """Return {depot_id: {product: value}} from a table like:
+           index/depot column + product columns (e.g., Ü1, Ü2)."""
+        tbl = sheets.get(sheet_name, [])
+        if not tbl:
+            return {}
+        headers = list(tbl[0].keys())
+        depot_col = headers[0]
+        product_cols = [h for h in headers[1:] if str(h).strip()]
+        out_map: Dict[str, Dict[str, int]] = {}
+        for row in tbl:
+            did = normalize_code(row.get(depot_col, ""))
+            if not did:
+                continue
+            prod_map: Dict[str, int] = {}
+            for pc in product_cols:
+                prod_map[str(pc).strip()] = max(0, safe_int(row.get(pc, 0), 0))
+            out_map[did] = prod_map
+        return out_map
+
+    max_stock = _read_depot_table("Max Stock")
+    safety_stock = _read_depot_table("Safety Stock")
+    initial_stock = _read_depot_table("Initial Stock")
+
+    # Daily consumption: compute per-depot total consumption from the first row (good enough for debugging).
+    daily_decay_by_depot: Dict[str, int] = {}
+    raw_cons = sheets.get("Tuketim", [])
+    if raw_cons:
+        day_key = None
+        for k in raw_cons[0].keys():
+            if normalize_code(k) in {"GUN", "GÜN", "DAY"}:
+                day_key = k
+                break
+        headers = list(raw_cons[0].keys())
+        cons_cols = [h for h in headers if h != day_key]
+        first_row = raw_cons[0]
+        for h in cons_cols:
+            h_txt = str(h).strip()
+            tokens = re.split(r"\s+", h_txt)
+            did = normalize_code(tokens[0]) if tokens else normalize_code(h_txt)
+            if not did:
+                continue
+            daily_decay_by_depot[did] = daily_decay_by_depot.get(did, 0) + max(0, safe_int(first_row.get(h, 0), 0))
+
+    if max_stock:
+        for did, prod_map in max_stock.items():
+            max_cap_total = sum(prod_map.values())
+            min_cap_total = sum(safety_stock.get(did, {}).values()) if safety_stock else 0
+            init_total = sum(initial_stock.get(did, {}).values()) if initial_stock else 0
+            depots[did] = Depot(
+                depot=did,
+                region="UNKNOWN",
+                max_cap=max_cap_total,
+                min_cap=min_cap_total,
+                daily_decay=daily_decay_by_depot.get(did, 0),
+                initial_level=init_total if init_total > 0 else max_cap_total,
+            )
+    else:
+        # Fallback: create depots from ports list (old behavior)
+        for idx, p in enumerate(ports):
+            depot_id = f"D_{p}"
+            region = "North" if idx == 0 else "South"
+            max_cap = max(10000, port_demand.get(p, 0) + 5000)
+            depots[depot_id] = Depot(
+                depot=depot_id,
+                region=region,
+                max_cap=max_cap,
+                min_cap=0,
+                daily_decay=0,
+                initial_level=max_cap,
+            )
 
     raw_routes = sheets.get("Gun_Maliyet", [])
     if not raw_routes:
@@ -298,6 +366,68 @@ def load_from_excel(path: str) -> Tuple[Dict[str, Location], Dict[str, Ship], Di
                 busy_days.setdefault(sid, set()).add(day)
 
     return locs, ships, depots, routes, busy_days
+
+
+def print_excel_data_preview(
+    path: str,
+    locs: Dict[str, Location],
+    ships: Dict[str, Ship],
+    depots: Dict[str, Depot],
+    routes: Dict[str, Route],
+    busy_days: Dict[str, Set[int]],
+    max_rows: int = 5,
+) -> None:
+    sheets = _xlsx_rows_as_dicts(path)
+    ordered_sheets = [
+        "Musteri_Talepleri",
+        "Kapasite",
+        "Mesguliyetler",
+        "Gun_Maliyet",
+        "Max Stock",
+        "Initial Stock",
+        "Safety Stock",
+        "Tuketim",
+        "Rafineri Talebi",
+    ]
+
+    print("\n=== EXCEL RAW PREVIEW ===")
+    for sheet_name in ordered_sheets:
+        rows = sheets.get(sheet_name, [])
+        print(f"\n[{sheet_name}] satir={len(rows)}")
+        if not rows:
+            continue
+        columns = list(rows[0].keys())
+        print("kolonlar:", columns)
+        for idx, row in enumerate(rows[:max_rows], start=1):
+            compact = {k: v for k, v in row.items() if str(v).strip()}
+            print(f"  {idx}. {compact}")
+
+    print("\n=== PARSED SUMMARY ===")
+    print(f"Musteri sayisi: {len(locs)}")
+    for k in sorted(locs.keys(), key=lambda x: safe_int(re.sub(r'[^0-9]', '', x), 999))[:max_rows]:
+        v = locs[k]
+        print(f"  {k}: qty={v.qty}, demand_day={v.demand_day}, region={v.region}")
+
+    print(f"\nGemi sayisi: {len(ships)}")
+    for k in sorted(ships.keys(), key=lambda x: safe_int(re.sub(r'[^0-9]', '', x), 999))[:max_rows]:
+        v = ships[k]
+        print(f"  {k}: capacity={v.capacity}")
+
+    print(f"\nDepo sayisi: {len(depots)}")
+    for k in sorted(depots.keys())[:max_rows]:
+        v = depots[k]
+        print(f"  {k}: max_cap={v.max_cap}, min_cap={v.min_cap}, initial={v.initial_level}")
+
+    print(f"\nRota sayisi: {len(routes)}")
+    for rid, route in list(routes.items())[:max_rows]:
+        print(
+            f"  {rid}: ship={route.ship_id}, stops={route.stops}, "
+            f"duration={route.duration}, cost={route.cost}, demand={route.demand_tons}"
+        )
+
+    print(f"\nMesgul gemi sayisi: {len(busy_days)}")
+    for sid in sorted(busy_days.keys(), key=lambda x: safe_int(re.sub(r'[^0-9]', '', x), 999))[:max_rows]:
+        print(f"  {sid}: days={sorted(busy_days[sid])}")
 
 
 # 3.5) DYNAMIC DEPOT ROUTE GENERATION
@@ -551,7 +681,7 @@ def evaluate(
     # 3. Depo Envanter Simülasyonu
     inv_debug = {}
     if cfg.enforce_depot_min_level:
-        current_inv = {d: depot.max_cap for d, depot in depots.items()}
+        current_inv = {d: (depot.initial_level if getattr(depot, 'initial_level', 0) > 0 else depot.max_cap) for d, depot in depots.items()}
         deliveries = {d: {day: 0 for day in range(1, 37)} for d in depots}
         
         for sid, sched in ship_schedules.items():
@@ -935,13 +1065,24 @@ def main():
         )
 
     locs, ships, depots, base_routes, BUSY_DAYS_BY_SHIP = load_from_excel(EXCEL_INPUT_PATH)
+    print("DEPOT IDS:", sorted(depots.keys()))
     print(f"[DATA] Excel yüklendi: {EXCEL_INPUT_PATH}")
     print(f"[DATA] Musteri={len(locs)} Gemi={len(ships)} Rota={len(base_routes)}")
-
+    if SHOW_EXCEL_DEBUG_OUTPUT:
+        print_excel_data_preview(
+            EXCEL_INPUT_PATH,
+            locs,
+            ships,
+            depots,
+            base_routes,
+            BUSY_DAYS_BY_SHIP,
+            max_rows=EXCEL_PREVIEW_ROWS,
+        )
+    
     # Depo rotalarını üret ve ekle
     new_depot_routes = generate_depot_routes(ships, base_routes, depots, locs)
     base_routes.update(new_depot_routes)
-
+    
     cfg = ConstraintConfig(
         enforce_duration_le_7=True,
         enforce_max_2_stops=True,

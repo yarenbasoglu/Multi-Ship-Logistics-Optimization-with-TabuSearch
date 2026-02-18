@@ -1,0 +1,1069 @@
+X1 G1 ('M1', 'M4') dur=3 cost=2890
+X2 G1 ('M1', 'M5') dur=5 cost=3738
+X3 G1 ('M1', 'M5') dur=3 cost=2890
+X4 G1 ('M1', 'M7') dur=5 cost=3593
+X5 G1 ('M1', 'M7') dur=4 cost=3019
+X6 G1 ('M1',) dur=4 cost=3090
+X7 G1 ('M1',) dur=2 cost=2351
+X8 G1 ('M2', 'M8') dur=5 cost=4089
+X9 G1 ('M2', 'M8') dur=7 cost=4935
+X10 G1 ('M2',) dur=3 cost=2893
+X11 G1 ('M2',) dur=5 cost=3739
+X12 G1 ('M3', 'M4') dur=3 cost=2919
+X13 G1 ('M3', 'M5') dur=5 cost=3767
+X14 G1 ('M3', 'M5') dur=3 cost=2919
+X15 G1 ('M3',) dur=3 cost=2949
+X16 G1 ('M3', 'M7') dur=5 cost=3525
+X17 G1 ('M3', 'M7') dur=3 cost=2952
+X18 G1 ('M3',) dur=3 cost=2753
+X19 G1 ('M3',) dur=2 cost=2380
+X20 G1 ('M4', 'M1') dur=5 cost=3738
+X21 G1 ('M4', 'M3') dur=5 cost=3767
+X22 G1 ('M4',) dur=2 cost=2360
+X23 G1 ('M5', 'M1') dur=5 cost=3738
+X24 G1 ('M5', 'M3') dur=5 cost=3767
+X25 G1 ('M5', 'M7') dur=5 cost=3716
+X26 G1 ('M5',) dur=4 cost=3207
+X27 G1 ('M5',) dur=2 cost=2360
+X28 G1 ('M6', 'M9') dur=7 cost=6481
+X29 G1 ('M6', 'M9') dur=6 cost=5698
+X30 G1 ('M6', 'M10') dur=8 cost=6681
+X31 G1 ('M6', 'M10') dur=7 cost=5898
+X32 G1 ('M6',) dur=6 cost=5870
+X33 G1 ('M6',) dur=5 cost=5087
+X34 G1 ('M3',) dur=5 cost=3868
+X35 G1 ('M7', 'M1') dur=5 cost=3593
+X36 G1 ('M7', 'M1') dur=3 cost=2854
+X37 G1 ('M7', 'M3') dur=5 cost=3525
+X38 G1 ('M7', 'M5') dur=5 cost=3716
+X39 G1 ('M7', 'M5') dur=3 cost=2868
+X40 G1 ('M7',) dur=4 cost=2943
+X41 G1 ('M7',) dur=2 cost=2369
+X42 G1 ('M8', 'M2') dur=5 cost=4089
+X43 G1 ('M8', 'M2') dur=7 cost=4935
+X44 G1 ('M8',) dur=4 cost=3311
+X45 G1 ('M8',) dur=6 cost=4157
+X46 G1 ('M9', 'M6') dur=8 cost=6481
+X47 G1 ('M9', 'M6') dur=7 cost=5698
+X48 G1 ('M9',) dur=6 cost=5318
+X49 G1 ('M9',) dur=4 cost=4536
+X50 G1 ('M10', 'M6') dur=8 cost=6681
+X51 G1 ('M10', 'M6') dur=7 cost=5898
+X52 G1 ('M10',) dur=6 cost=5518
+X53 G1 ('M10',) dur=4 cost=4736
+X54 G1 ('M1', 'M4') dur=4 cost=2194
+X55 G1 ('M1', 'M5') dur=4 cost=2194
+X56 G1 ('M1', 'M7') dur=5 cost=2897
+X57 G1 ('M1', 'M7') dur=4 cost=2323
+X58 G1 ('M1',) dur=4 cost=2394
+X59 G1 ('M1',) dur=3 cost=1655
+X60 G1 ('M2', 'M8') dur=6 cost=4978
+X61 G1 ('M2', 'M8') dur=8 cost=5824
+X62 G1 ('M2',) dur=4 cost=3782
+X63 G1 ('M2',) dur=6 cost=4628
+X64 G1 ('M3', 'M4') dur=3 cost=2589
+X65 G1 ('M3', 'M5') dur=3 cost=2589
+X66 G1 ('M3',) dur=4 cost=2949
+X67 G1 ('M3', 'M7') dur=3 cost=2621
+X68 G1 ('M3',) dur=3 cost=2423
+X69 G1 ('M3',) dur=2 cost=2050
+X70 G1 ('M4', 'M1') dur=5 cost=2933
+X71 G1 ('M4', 'M1') dur=4 cost=2194
+X72 G1 ('M4', 'M3') dur=5 cost=2962
+X73 G1 ('M4', 'M3') dur=4 cost=2589
+X74 G1 ('M5', 'M1') dur=5 cost=2933
+X75 G1 ('M5', 'M1') dur=4 cost=2194
+X76 G1 ('M5', 'M3') dur=5 cost=2962
+X77 G1 ('M5', 'M3') dur=4 cost=2589
+X78 G1 ('M5', 'M7') dur=5 cost=2911
+X79 G1 ('M5', 'M7') dur=4 cost=2338
+X80 G1 ('M5',) dur=4 cost=2403
+X81 G1 ('M5',) dur=2 cost=1555
+X82 G1 ('M6', 'M9') dur=8 cost=5741
+X83 G1 ('M6', 'M9') dur=6 cost=4959
+X84 G1 ('M6', 'M10') dur=9 cost=5941
+X85 G1 ('M6', 'M10') dur=7 cost=5159
+X86 G1 ('M6',) dur=7 cost=5130
+X87 G1 ('M6',) dur=5 cost=4348
+X88 G1 ('M3',) dur=5 cost=3868
+X89 G1 ('M7', 'M1') dur=5 cost=3062
+X90 G1 ('M7', 'M1') dur=3 cost=2323
+X91 G1 ('M7', 'M3') dur=4 cost=2995
+X92 G1 ('M7', 'M3') dur=3 cost=2621
+X93 G1 ('M7', 'M5') dur=3 cost=2338
+X94 G1 ('M7',) dur=3 cost=2412
+X95 G1 ('M7',) dur=2 cost=1838
+X96 G1 ('M8', 'M2') dur=5 cost=4978
+X97 G1 ('M8', 'M2') dur=7 cost=5824
+X98 G1 ('M8',) dur=4 cost=4200
+X99 G1 ('M8',) dur=6 cost=5046
+X100 G1 ('M9', 'M6') dur=8 cost=5741
+X101 G1 ('M9', 'M6') dur=6 cost=4959
+X102 G1 ('M9',) dur=6 cost=4579
+X103 G1 ('M9',) dur=4 cost=3796
+X104 G1 ('M10', 'M6') dur=8 cost=5941
+X105 G1 ('M10', 'M6') dur=6 cost=5159
+X106 G1 ('M10',) dur=6 cost=4779
+X107 G1 ('M10',) dur=4 cost=3996
+X108 G2 ('M1', 'M4') dur=3 cost=1835
+X109 G2 ('M1', 'M5') dur=4 cost=2337
+X110 G2 ('M1', 'M5') dur=3 cost=1835
+X111 G2 ('M1', 'M7') dur=4 cost=2254
+X112 G2 ('M1', 'M7') dur=3 cost=1979
+X113 G2 ('M1',) dur=3 cost=1888
+X114 G2 ('M1',) dur=2 cost=1476
+X115 G2 ('M2', 'M8') dur=6 cost=3124
+X116 G2 ('M2', 'M8') dur=7 cost=3624
+X117 G2 ('M2',) dur=3 cost=2177
+X118 G2 ('M2',) dur=5 cost=2677
+X119 G2 ('M3', 'M4') dur=4 cost=1893
+X120 G2 ('M3', 'M5') dur=5 cost=2395
+X121 G2 ('M3', 'M5') dur=4 cost=1893
+X122 G2 ('M3',) dur=4 cost=1900
+X123 G2 ('M3', 'M7') dur=5 cost=2232
+X124 G2 ('M3', 'M7') dur=4 cost=1957
+X125 G2 ('M3',) dur=3 cost=1644
+X126 G2 ('M3',) dur=3 cost=1535
+X127 G2 ('M4', 'M1') dur=4 cost=2337
+X128 G2 ('M4', 'M3') dur=4 cost=2395
+X129 G2 ('M4',) dur=2 cost=1490
+X130 G2 ('M5', 'M1') dur=4 cost=2337
+X131 G2 ('M5', 'M3') dur=4 cost=2395
+X132 G2 ('M5', 'M7') dur=4 cost=2362
+X133 G2 ('M5',) dur=3 cost=1992
+X134 G2 ('M5',) dur=2 cost=1490
+X135 G2 ('M6', 'M9') dur=7 cost=4177
+X136 G2 ('M6', 'M9') dur=5 cost=3729
+X137 G2 ('M6', 'M10') dur=8 cost=4377
+X138 G2 ('M6', 'M10') dur=6 cost=3929
+X139 G2 ('M6',) dur=6 cost=3738
+X140 G2 ('M6',) dur=4 cost=3290
+X141 G2 ('M3',) dur=4 cost=2460
+X142 G2 ('M7', 'M1') dur=5 cost=2254
+X143 G2 ('M7', 'M1') dur=4 cost=1843
+X144 G2 ('M7', 'M3') dur=5 cost=2232
+X145 G2 ('M7', 'M5') dur=5 cost=2362
+X146 G2 ('M7', 'M5') dur=4 cost=1860
+X147 G2 ('M7',) dur=3 cost=1810
+X148 G2 ('M7',) dur=2 cost=1535
+X149 G2 ('M8', 'M2') dur=6 cost=3124
+X150 G2 ('M8', 'M2') dur=7 cost=3624
+X151 G2 ('M8',) dur=5 cost=2520
+X152 G2 ('M8',) dur=6 cost=3020
+X153 G2 ('M9', 'M6') dur=7 cost=4177
+X154 G2 ('M9', 'M6') dur=5 cost=3729
+X155 G2 ('M9',) dur=5 cost=3359
+X156 G2 ('M9',) dur=4 cost=2911
+X157 G2 ('M10', 'M6') dur=7 cost=4377
+X158 G2 ('M10', 'M6') dur=5 cost=3929
+X159 G2 ('M10',) dur=5 cost=3559
+X160 G2 ('M10',) dur=4 cost=3111
+X161 G2 ('M1', 'M4') dur=4 cost=1445
+X162 G2 ('M1', 'M5') dur=4 cost=1445
+X163 G2 ('M1', 'M7') dur=5 cost=1864
+X164 G2 ('M1', 'M7') dur=4 cost=1589
+X165 G2 ('M1',) dur=3 cost=1498
+X166 G2 ('M1',) dur=2 cost=1086
+X167 G2 ('M2', 'M8') dur=6 cost=3645
+X168 G2 ('M2', 'M8') dur=8 cost=4145
+X169 G2 ('M2',) dur=4 cost=2698
+X170 G2 ('M2',) dur=5 cost=3198
+X171 G2 ('M3', 'M4') dur=4 cost=1805
+X172 G2 ('M3', 'M5') dur=4 cost=1805
+X173 G2 ('M3',) dur=4 cost=1900
+X174 G2 ('M3', 'M7') dur=4 cost=1869
+X175 G2 ('M3',) dur=3 cost=1556
+X176 G2 ('M3',) dur=3 cost=1446
+X177 G2 ('M4', 'M1') dur=5 cost=1857
+X178 G2 ('M4', 'M1') dur=4 cost=1445
+X179 G2 ('M4', 'M3') dur=5 cost=1915
+X180 G2 ('M4', 'M3') dur=5 cost=1805
+X181 G2 ('M4',) dur=2 cost=1010
+X182 G2 ('M5', 'M1') dur=5 cost=1857
+X183 G2 ('M5', 'M1') dur=4 cost=1445
+X184 G2 ('M5', 'M3') dur=5 cost=1915
+X185 G2 ('M5', 'M3') dur=5 cost=1805
+X186 G2 ('M5', 'M7') dur=5 cost=1882
+X187 G2 ('M5', 'M7') dur=4 cost=1607
+X188 G2 ('M5',) dur=4 cost=1512
+X189 G2 ('M5',) dur=2 cost=1010
+X190 G2 ('M6', 'M9') dur=6 cost=3750
+X191 G2 ('M6', 'M9') dur=5 cost=3303
+X192 G2 ('M6', 'M10') dur=7 cost=3950
+X193 G2 ('M6', 'M10') dur=6 cost=3503
+X194 G2 ('M6',) dur=5 cost=3311
+X195 G2 ('M6',) dur=4 cost=2864
+X196 G2 ('M3',) dur=4 cost=2460
+X197 G2 ('M7', 'M1') dur=4 cost=2001
+X198 G2 ('M7', 'M1') dur=3 cost=1589
+X199 G2 ('M7', 'M3') dur=4 cost=1979
+X200 G2 ('M7', 'M3') dur=4 cost=1869
+X201 G2 ('M7', 'M5') dur=3 cost=1607
+X202 G2 ('M7',) dur=3 cost=1556
+X203 G2 ('M7',) dur=2 cost=1281
+X204 G2 ('M8', 'M2') dur=5 cost=3645
+X205 G2 ('M8', 'M2') dur=7 cost=4145
+X206 G2 ('M8',) dur=4 cost=3042
+X207 G2 ('M8',) dur=5 cost=3542
+X208 G2 ('M9', 'M6') dur=7 cost=3750
+X209 G2 ('M9', 'M6') dur=6 cost=3303
+X210 G2 ('M9',) dur=6 cost=2933
+X211 G2 ('M9',) dur=5 cost=2485
+X212 G2 ('M10', 'M6') dur=7 cost=3950
+X213 G2 ('M10', 'M6') dur=6 cost=3503
+X214 G2 ('M10',) dur=6 cost=3133
+X215 G2 ('M10',) dur=5 cost=2685
+X216 G3 ('M1', 'M4') dur=3 cost=2890
+X217 G3 ('M1', 'M5') dur=5 cost=3738
+X218 G3 ('M1', 'M5') dur=3 cost=2890
+X219 G3 ('M1', 'M7') dur=5 cost=3593
+X220 G3 ('M1', 'M7') dur=4 cost=3019
+X221 G3 ('M1',) dur=4 cost=3090
+X222 G3 ('M1',) dur=2 cost=2351
+X223 G3 ('M2', 'M8') dur=5 cost=4089
+X224 G3 ('M2', 'M8') dur=7 cost=4935
+X225 G3 ('M2',) dur=3 cost=2893
+X226 G3 ('M2',) dur=5 cost=3739
+X227 G3 ('M3', 'M4') dur=3 cost=2919
+X228 G3 ('M3', 'M5') dur=5 cost=3767
+X229 G3 ('M3', 'M5') dur=3 cost=2919
+X230 G3 ('M3',) dur=3 cost=2949
+X231 G3 ('M3', 'M7') dur=5 cost=3525
+X232 G3 ('M3', 'M7') dur=3 cost=2952
+X233 G3 ('M3',) dur=3 cost=2753
+X234 G3 ('M3',) dur=2 cost=2380
+X235 G3 ('M4', 'M1') dur=5 cost=3738
+X236 G3 ('M4', 'M3') dur=5 cost=3767
+X237 G3 ('M4',) dur=2 cost=2360
+X238 G3 ('M5', 'M1') dur=5 cost=3738
+X239 G3 ('M5', 'M3') dur=5 cost=3767
+X240 G3 ('M5', 'M7') dur=5 cost=3716
+X241 G3 ('M5',) dur=4 cost=3207
+X242 G3 ('M5',) dur=2 cost=2360
+X243 G3 ('M6', 'M9') dur=7 cost=6481
+X244 G3 ('M6', 'M9') dur=6 cost=5698
+X245 G3 ('M6', 'M10') dur=8 cost=6681
+X246 G3 ('M6', 'M10') dur=7 cost=5898
+X247 G3 ('M6',) dur=6 cost=5870
+X248 G3 ('M6',) dur=5 cost=5087
+X249 G3 ('M3',) dur=5 cost=3868
+X250 G3 ('M7', 'M1') dur=5 cost=3593
+X251 G3 ('M7', 'M1') dur=3 cost=2854
+X252 G3 ('M7', 'M3') dur=5 cost=3525
+X253 G3 ('M7', 'M5') dur=5 cost=3716
+X254 G3 ('M7', 'M5') dur=3 cost=2868
+X255 G3 ('M7',) dur=4 cost=2943
+X256 G3 ('M7',) dur=2 cost=2369
+X257 G3 ('M8', 'M2') dur=5 cost=4089
+X258 G3 ('M8', 'M2') dur=7 cost=4935
+X259 G3 ('M8',) dur=4 cost=3311
+X260 G3 ('M8',) dur=6 cost=4157
+X261 G3 ('M9', 'M6') dur=8 cost=6481
+X262 G3 ('M9', 'M6') dur=7 cost=5698
+X263 G3 ('M9',) dur=6 cost=5318
+X264 G3 ('M9',) dur=4 cost=4536
+X265 G3 ('M10', 'M6') dur=8 cost=6681
+X266 G3 ('M10', 'M6') dur=7 cost=5898
+X267 G3 ('M10',) dur=6 cost=5518
+X268 G3 ('M10',) dur=4 cost=4736
+X269 G3 ('M1', 'M4') dur=4 cost=2194
+X270 G3 ('M1', 'M5') dur=4 cost=2194
+X271 G3 ('M1', 'M7') dur=5 cost=2897
+X272 G3 ('M1', 'M7') dur=4 cost=2323
+X273 G3 ('M1',) dur=4 cost=2394
+X274 G3 ('M1',) dur=3 cost=1655
+X275 G3 ('M2', 'M8') dur=6 cost=4978
+X276 G3 ('M2', 'M8') dur=8 cost=5824
+X277 G3 ('M2',) dur=4 cost=3782
+X278 G3 ('M2',) dur=6 cost=4628
+X279 G3 ('M3', 'M4') dur=3 cost=2589
+X280 G3 ('M3', 'M5') dur=3 cost=2589
+X281 G3 ('M3',) dur=4 cost=2949
+X282 G3 ('M3', 'M7') dur=3 cost=2621
+X283 G3 ('M3',) dur=3 cost=2423
+X284 G3 ('M3',) dur=2 cost=2050
+X285 G3 ('M4', 'M1') dur=5 cost=2933
+X286 G3 ('M4', 'M1') dur=4 cost=2194
+X287 G3 ('M4', 'M3') dur=5 cost=2962
+X288 G3 ('M4', 'M3') dur=4 cost=2589
+X289 G3 ('M5', 'M1') dur=5 cost=2933
+X290 G3 ('M5', 'M1') dur=4 cost=2194
+X291 G3 ('M5', 'M3') dur=5 cost=2962
+X292 G3 ('M5', 'M3') dur=4 cost=2589
+X293 G3 ('M5', 'M7') dur=5 cost=2911
+X294 G3 ('M5', 'M7') dur=4 cost=2338
+X295 G3 ('M5',) dur=4 cost=2403
+X296 G3 ('M5',) dur=2 cost=1555
+X297 G3 ('M6', 'M9') dur=8 cost=5741
+X298 G3 ('M6', 'M9') dur=6 cost=4959
+X299 G3 ('M6', 'M10') dur=9 cost=5941
+X300 G3 ('M6', 'M10') dur=7 cost=5159
+X301 G3 ('M6',) dur=7 cost=5130
+X302 G3 ('M6',) dur=5 cost=4348
+X303 G3 ('M3',) dur=5 cost=3868
+X304 G3 ('M7', 'M1') dur=5 cost=3062
+X305 G3 ('M7', 'M1') dur=3 cost=2323
+X306 G3 ('M7', 'M3') dur=4 cost=2995
+X307 G3 ('M7', 'M3') dur=3 cost=2621
+X308 G3 ('M7', 'M5') dur=3 cost=2338
+X309 G3 ('M7',) dur=3 cost=2412
+X310 G3 ('M7',) dur=2 cost=1838
+X311 G3 ('M8', 'M2') dur=5 cost=4978
+X312 G3 ('M8', 'M2') dur=7 cost=5824
+X313 G3 ('M8',) dur=4 cost=4200
+X314 G3 ('M8',) dur=6 cost=5046
+X315 G3 ('M9', 'M6') dur=8 cost=5741
+X316 G3 ('M9', 'M6') dur=6 cost=4959
+X317 G3 ('M9',) dur=6 cost=4579
+X318 G3 ('M9',) dur=4 cost=3796
+X319 G3 ('M10', 'M6') dur=8 cost=5941
+X320 G3 ('M10', 'M6') dur=6 cost=5159
+X321 G3 ('M10',) dur=6 cost=4779
+X322 G3 ('M10',) dur=4 cost=3996
+X323 G4 ('M11',) dur=6 cost=8922
+X324 G4 ('M11',) dur=5 cost=7572
+X325 G4 ('M11',) dur=4 cost=6632
+X326 G4 ('M11',) dur=3 cost=4889
+X327 G5 ('M1', 'M4') dur=3 cost=2078
+X328 G5 ('M1', 'M5') dur=4 cost=2642
+X329 G5 ('M1', 'M5') dur=3 cost=2078
+X330 G5 ('M1', 'M7') dur=4 cost=2546
+X331 G5 ('M1', 'M7') dur=3 cost=2236
+X332 G5 ('M1',) dur=3 cost=2138
+X333 G5 ('M1',) dur=2 cost=1675
+X334 G5 ('M2', 'M8') dur=6 cost=3488
+X335 G5 ('M2', 'M8') dur=7 cost=4050
+X336 G5 ('M2',) dur=3 cost=2431
+X337 G5 ('M2',) dur=5 cost=2993
+X338 G5 ('M3', 'M4') dur=4 cost=2138
+X339 G5 ('M3', 'M5') dur=5 cost=2701
+X340 G5 ('M3', 'M5') dur=4 cost=2138
+X341 G5 ('M3',) dur=4 cost=2143
+X342 G5 ('M3', 'M7') dur=5 cost=2517
+X343 G5 ('M3', 'M7') dur=4 cost=2206
+X344 G5 ('M3',) dur=3 cost=1860
+X345 G5 ('M3',) dur=3 cost=1735
+X346 G5 ('M4', 'M1') dur=4 cost=2642
+X347 G5 ('M4', 'M3') dur=4 cost=2701
+X348 G5 ('M4',) dur=2 cost=1688
+X349 G5 ('M5', 'M1') dur=4 cost=2642
+X350 G5 ('M5', 'M3') dur=4 cost=2701
+X351 G5 ('M5', 'M7') dur=4 cost=2664
+X352 G5 ('M5',) dur=3 cost=2252
+X353 G5 ('M5',) dur=2 cost=1688
+X354 G5 ('M6', 'M9') dur=7 cost=4673
+X355 G5 ('M6', 'M9') dur=5 cost=4170
+X356 G5 ('M6', 'M10') dur=8 cost=4873
+X357 G5 ('M6', 'M10') dur=6 cost=4370
+X358 G5 ('M6',) dur=6 cost=4185
+X359 G5 ('M6',) dur=4 cost=3682
+X360 G5 ('M3',) dur=4 cost=2773
+X361 G5 ('M7', 'M1') dur=5 cost=2546
+X362 G5 ('M7', 'M1') dur=4 cost=2083
+X363 G5 ('M7', 'M3') dur=5 cost=2517
+X364 G5 ('M7', 'M5') dur=5 cost=2664
+X365 G5 ('M7', 'M5') dur=4 cost=2101
+X366 G5 ('M7',) dur=3 cost=2045
+X367 G5 ('M7',) dur=2 cost=1735
+X368 G5 ('M8', 'M2') dur=6 cost=3488
+X369 G5 ('M8', 'M2') dur=7 cost=4050
+X370 G5 ('M8',) dur=5 cost=2834
+X371 G5 ('M8',) dur=6 cost=3396
+X372 G5 ('M9', 'M6') dur=7 cost=4673
+X373 G5 ('M9', 'M6') dur=5 cost=4170
+X374 G5 ('M9',) dur=5 cost=3782
+X375 G5 ('M9',) dur=4 cost=3278
+X376 G5 ('M10', 'M6') dur=7 cost=4873
+X377 G5 ('M10', 'M6') dur=5 cost=4370
+X378 G5 ('M10',) dur=5 cost=3982
+X379 G5 ('M10',) dur=4 cost=3478
+X380 G5 ('M1', 'M4') dur=4 cost=1636
+X381 G5 ('M1', 'M5') dur=4 cost=1636
+X382 G5 ('M1', 'M7') dur=5 cost=2104
+X383 G5 ('M1', 'M7') dur=4 cost=1794
+X384 G5 ('M1',) dur=3 cost=1696
+X385 G5 ('M1',) dur=2 cost=1233
+X386 G5 ('M2', 'M8') dur=6 cost=4072
+X387 G5 ('M2', 'M8') dur=8 cost=4634
+X388 G5 ('M2',) dur=4 cost=3014
+X389 G5 ('M2',) dur=5 cost=3576
+X390 G5 ('M3', 'M4') dur=4 cost=2034
+X391 G5 ('M3', 'M5') dur=4 cost=2034
+X392 G5 ('M3',) dur=4 cost=2143
+X393 G5 ('M3', 'M7') dur=4 cost=2102
+X394 G5 ('M3',) dur=3 cost=1756
+X395 G5 ('M3',) dur=3 cost=1631
+X396 G5 ('M4', 'M1') dur=5 cost=2100
+X397 G5 ('M4', 'M1') dur=4 cost=1636
+X398 G5 ('M4', 'M3') dur=5 cost=2159
+X399 G5 ('M4', 'M3') dur=5 cost=2034
+X400 G5 ('M4',) dur=2 cost=1146
+X401 G5 ('M5', 'M1') dur=5 cost=2100
+X402 G5 ('M5', 'M1') dur=4 cost=1636
+X403 G5 ('M5', 'M3') dur=5 cost=2159
+X404 G5 ('M5', 'M3') dur=5 cost=2034
+X405 G5 ('M5', 'M7') dur=5 cost=2122
+X406 G5 ('M5', 'M7') dur=4 cost=1812
+X407 G5 ('M5',) dur=4 cost=1710
+X408 G5 ('M5',) dur=2 cost=1146
+X409 G5 ('M6', 'M9') dur=6 cost=4191
+X410 G5 ('M6', 'M9') dur=5 cost=3688
+X411 G5 ('M6', 'M10') dur=7 cost=4391
+X412 G5 ('M6', 'M10') dur=6 cost=3888
+X413 G5 ('M6',) dur=5 cost=3703
+X414 G5 ('M6',) dur=4 cost=3200
+X415 G5 ('M3',) dur=4 cost=2773
+X416 G5 ('M7', 'M1') dur=4 cost=2257
+X417 G5 ('M7', 'M1') dur=3 cost=1794
+X418 G5 ('M7', 'M3') dur=4 cost=2228
+X419 G5 ('M7', 'M3') dur=4 cost=2102
+X420 G5 ('M7', 'M5') dur=3 cost=1812
+X421 G5 ('M7',) dur=3 cost=1756
+X422 G5 ('M7',) dur=2 cost=1446
+X423 G5 ('M8', 'M2') dur=5 cost=4072
+X424 G5 ('M8', 'M2') dur=7 cost=4634
+X425 G5 ('M8',) dur=4 cost=3418
+X426 G5 ('M8',) dur=5 cost=3979
+X427 G5 ('M9', 'M6') dur=7 cost=4191
+X428 G5 ('M9', 'M6') dur=6 cost=3688
+X429 G5 ('M9',) dur=6 cost=3300
+X430 G5 ('M9',) dur=5 cost=2796
+X431 G5 ('M10', 'M6') dur=7 cost=4391
+X432 G5 ('M10', 'M6') dur=6 cost=3888
+X433 G5 ('M10',) dur=6 cost=3500
+X434 G5 ('M10',) dur=5 cost=2996
+X435 G9 ('M1', 'M5') dur=4 cost=2642
+X436 G9 ('M1', 'M5') dur=3 cost=2078
+X437 G9 ('M1', 'M7') dur=4 cost=2546
+X438 G9 ('M1', 'M7') dur=3 cost=2236
+X439 G9 ('M1',) dur=3 cost=2138
+X440 G9 ('M1',) dur=2 cost=1675
+X441 G9 ('M2', 'M8') dur=6 cost=3488
+X442 G9 ('M2', 'M8') dur=7 cost=4050
+X443 G9 ('M2',) dur=3 cost=2431
+X444 G9 ('M2',) dur=5 cost=2993
+X445 G9 ('M3', 'M5') dur=5 cost=2701
+X446 G9 ('M3', 'M5') dur=4 cost=2138
+X447 G9 ('M3',) dur=4 cost=2143
+X448 G9 ('M3', 'M7') dur=5 cost=2517
+X449 G9 ('M3', 'M7') dur=4 cost=2206
+X450 G9 ('M3',) dur=3 cost=1860
+X451 G9 ('M3',) dur=3 cost=1735
+X452 G9 ('M4',) dur=2 cost=1688
+X453 G9 ('M5', 'M1') dur=4 cost=2642
+X454 G9 ('M5', 'M3') dur=4 cost=2701
+X455 G9 ('M5', 'M7') dur=4 cost=2664
+X456 G9 ('M5',) dur=3 cost=2252
+X457 G9 ('M5',) dur=2 cost=1688
+X458 G9 ('M6', 'M9') dur=7 cost=4673
+X459 G9 ('M6', 'M9') dur=5 cost=4170
+X460 G9 ('M6', 'M10') dur=8 cost=4873
+X461 G9 ('M6', 'M10') dur=6 cost=4370
+X462 G9 ('M6',) dur=6 cost=4185
+X463 G9 ('M6',) dur=4 cost=3682
+X464 G9 ('M3',) dur=4 cost=2773
+X465 G9 ('M7', 'M1') dur=5 cost=2546
+X466 G9 ('M7', 'M1') dur=4 cost=2083
+X467 G9 ('M7', 'M3') dur=5 cost=2517
+X468 G9 ('M7', 'M5') dur=5 cost=2664
+X469 G9 ('M7', 'M5') dur=4 cost=2101
+X470 G9 ('M7',) dur=3 cost=2045
+X471 G9 ('M7',) dur=2 cost=1735
+X472 G9 ('M8', 'M2') dur=6 cost=3488
+X473 G9 ('M8', 'M2') dur=7 cost=4050
+X474 G9 ('M8',) dur=5 cost=2834
+X475 G9 ('M8',) dur=6 cost=3396
+X476 G9 ('M9', 'M6') dur=7 cost=4673
+X477 G9 ('M9', 'M6') dur=5 cost=4170
+X478 G9 ('M9',) dur=5 cost=3782
+X479 G9 ('M9',) dur=4 cost=3278
+X480 G9 ('M10', 'M6') dur=7 cost=4873
+X481 G9 ('M10', 'M6') dur=5 cost=4370
+X482 G9 ('M10',) dur=5 cost=3982
+X483 G9 ('M10',) dur=4 cost=3478
+X484 G9 ('M1', 'M5') dur=4 cost=1636
+X485 G9 ('M1', 'M7') dur=5 cost=2104
+X486 G9 ('M1', 'M7') dur=4 cost=1794
+X487 G9 ('M1',) dur=3 cost=1696
+X488 G9 ('M1',) dur=2 cost=1233
+X489 G9 ('M2', 'M8') dur=6 cost=4072
+X490 G9 ('M2', 'M8') dur=8 cost=4634
+X491 G9 ('M2',) dur=4 cost=3014
+X492 G9 ('M2',) dur=5 cost=3576
+X493 G9 ('M3', 'M5') dur=4 cost=2034
+X494 G9 ('M3',) dur=4 cost=2143
+X495 G9 ('M3', 'M7') dur=4 cost=2102
+X496 G9 ('M3',) dur=3 cost=1756
+X497 G9 ('M3',) dur=3 cost=1631
+X498 G9 ('M4',) dur=2 cost=1146
+X499 G9 ('M5', 'M1') dur=5 cost=2100
+X500 G9 ('M5', 'M1') dur=4 cost=1636
+X501 G9 ('M5', 'M3') dur=5 cost=2159
+X502 G9 ('M5', 'M3') dur=5 cost=2034
+X503 G9 ('M5', 'M7') dur=5 cost=2122
+X504 G9 ('M5', 'M7') dur=4 cost=1812
+X505 G9 ('M5',) dur=4 cost=1710
+X506 G9 ('M5',) dur=2 cost=1146
+X507 G9 ('M6', 'M9') dur=6 cost=4191
+X508 G9 ('M6', 'M9') dur=5 cost=3688
+X509 G9 ('M6', 'M10') dur=7 cost=4391
+X510 G9 ('M6', 'M10') dur=6 cost=3888
+X511 G9 ('M6',) dur=5 cost=3703
+X512 G9 ('M6',) dur=4 cost=3200
+X513 G9 ('M3',) dur=4 cost=2773
+X514 G9 ('M7', 'M1') dur=4 cost=2257
+X515 G9 ('M7', 'M1') dur=3 cost=1794
+X516 G9 ('M7', 'M3') dur=4 cost=2228
+X517 G9 ('M7', 'M3') dur=4 cost=2102
+X518 G9 ('M7', 'M5') dur=3 cost=1812
+X519 G9 ('M7',) dur=3 cost=1756
+X520 G9 ('M7',) dur=2 cost=1446
+X521 G9 ('M8', 'M2') dur=5 cost=4072
+X522 G9 ('M8', 'M2') dur=7 cost=4634
+X523 G9 ('M8',) dur=4 cost=3418
+X524 G9 ('M8',) dur=5 cost=3979
+X525 G9 ('M9', 'M6') dur=7 cost=8382
+X526 G9 ('M9', 'M6') dur=6 cost=7376
+X527 G9 ('M9',) dur=6 cost=6599
+X528 G9 ('M9',) dur=5 cost=5593
+X529 G9 ('M10', 'M6') dur=7 cost=8782
+X530 G9 ('M10', 'M6') dur=6 cost=7776
+X531 G9 ('M10',) dur=6 cost=6999
+X532 G9 ('M10',) dur=5 cost=5993
+X533 G6 ('M1', 'M4') dur=3 cost=1531
+X534 G6 ('M1', 'M5') dur=4 cost=1984
+X535 G6 ('M1', 'M5') dur=3 cost=1531
+X536 G6 ('M1', 'M7') dur=4 cost=1902
+X537 G6 ('M1', 'M7') dur=3 cost=1661
+X538 G6 ('M1',) dur=3 cost=1621
+X539 G6 ('M1',) dur=2 cost=1252
+X540 G6 ('M2', 'M8') dur=6 cost=2667
+X541 G6 ('M2', 'M8') dur=8 cost=3119
+X542 G6 ('M2',) dur=3 cost=1820
+X543 G6 ('M2',) dur=5 cost=2272
+X544 G6 ('M3', 'M4') dur=4 cost=1577
+X545 G6 ('M3', 'M5') dur=6 cost=2031
+X546 G6 ('M3', 'M5') dur=4 cost=1577
+X547 G6 ('M3',) dur=4 cost=1578
+X548 G6 ('M3', 'M7') dur=5 cost=1874
+X549 G6 ('M3', 'M7') dur=4 cost=1633
+X550 G6 ('M3',) dur=3 cost=1384
+X551 G6 ('M3',) dur=3 cost=1299
+X552 G6 ('M4', 'M1') dur=4 cost=1984
+X553 G6 ('M4', 'M3') dur=5 cost=2031
+X554 G6 ('M4',) dur=2 cost=1240
+X555 G6 ('M5', 'M1') dur=4 cost=1984
+X556 G6 ('M5', 'M3') dur=5 cost=2031
+X557 G6 ('M5', 'M7') dur=4 cost=1978
+X558 G6 ('M5',) dur=4 cost=1693
+X559 G6 ('M5',) dur=2 cost=1240
+X560 G6 ('M6', 'M9') dur=7 cost=3543
+X561 G6 ('M6', 'M9') dur=6 cost=3141
+X562 G6 ('M6', 'M10') dur=8 cost=3743
+X563 G6 ('M6', 'M10') dur=7 cost=3341
+X564 G6 ('M6',) dur=6 cost=3196
+X565 G6 ('M6',) dur=5 cost=2793
+X566 G6 ('M3',) dur=5 cost=2087
+X567 G6 ('M7', 'M1') dur=4 cost=1902
+X568 G6 ('M7', 'M1') dur=3 cost=1533
+X569 G6 ('M7', 'M3') dur=4 cost=1874
+X570 G6 ('M7', 'M5') dur=4 cost=1978
+X571 G6 ('M7', 'M5') dur=3 cost=1525
+X572 G6 ('M7',) dur=3 cost=1518
+X573 G6 ('M7',) dur=2 cost=1277
+X574 G6 ('M8', 'M2') dur=5 cost=2667
+X575 G6 ('M8', 'M2') dur=7 cost=3119
+X576 G6 ('M8',) dur=4 cost=2240
+X577 G6 ('M8',) dur=6 cost=2692
+X578 G6 ('M9', 'M6') dur=7 cost=3543
+X579 G6 ('M9', 'M6') dur=6 cost=3141
+X580 G6 ('M9',) dur=6 cost=2935
+X581 G6 ('M9',) dur=4 cost=2532
+X582 G6 ('M10', 'M6') dur=7 cost=3743
+X583 G6 ('M10', 'M6') dur=6 cost=3341
+X584 G6 ('M10',) dur=6 cost=3135
+X585 G6 ('M10',) dur=4 cost=2732
+X586 G6 ('M1', 'M4') dur=4 cost=1162
+X587 G6 ('M1', 'M5') dur=4 cost=1162
+X588 G6 ('M1', 'M7') dur=5 cost=1533
+X589 G6 ('M1', 'M7') dur=4 cost=1292
+X590 G6 ('M1',) dur=3 cost=1252
+X591 G6 ('M1',) dur=2 cost=883
+X592 G6 ('M2', 'M8') dur=7 cost=3119
+X593 G6 ('M2', 'M8') dur=8 cost=3571
+X594 G6 ('M2',) dur=4 cost=2272
+X595 G6 ('M2',) dur=6 cost=2724
+X596 G6 ('M3', 'M4') dur=4 cost=1492
+X597 G6 ('M3', 'M5') dur=4 cost=1492
+X598 G6 ('M3',) dur=4 cost=1578
+X599 G6 ('M3', 'M7') dur=4 cost=1547
+X600 G6 ('M3',) dur=3 cost=1299
+X601 G6 ('M3',) dur=3 cost=1213
+X602 G6 ('M4', 'M1') dur=5 cost=1531
+X603 G6 ('M4', 'M1') dur=4 cost=1162
+X604 G6 ('M4', 'M3') dur=5 cost=1577
+X605 G6 ('M4', 'M3') dur=5 cost=1492
+X606 G6 ('M4',) dur=2 cost=787
+X607 G6 ('M5', 'M1') dur=5 cost=1531
+X608 G6 ('M5', 'M1') dur=4 cost=1162
+X609 G6 ('M5', 'M3') dur=5 cost=1577
+X610 G6 ('M5', 'M3') dur=5 cost=1492
+X611 G6 ('M5', 'M7') dur=5 cost=1525
+X612 G6 ('M5', 'M7') dur=4 cost=1284
+X613 G6 ('M5',) dur=4 cost=1240
+X614 G6 ('M5',) dur=2 cost=787
+X615 G6 ('M6', 'M9') dur=7 cost=3141
+X616 G6 ('M6', 'M9') dur=6 cost=2738
+X617 G6 ('M6', 'M10') dur=8 cost=3341
+X618 G6 ('M6', 'M10') dur=7 cost=2938
+X619 G6 ('M6',) dur=6 cost=2793
+X620 G6 ('M6',) dur=4 cost=2390
+X621 G6 ('M3',) dur=5 cost=2087
+X622 G6 ('M7', 'M1') dur=4 cost=1661
+X623 G6 ('M7', 'M1') dur=3 cost=1292
+X624 G6 ('M7', 'M3') dur=4 cost=1633
+X625 G6 ('M7', 'M3') dur=4 cost=1547
+X626 G6 ('M7', 'M5') dur=3 cost=1284
+X627 G6 ('M7',) dur=3 cost=1277
+X628 G6 ('M7',) dur=2 cost=1036
+X629 G6 ('M8', 'M2') dur=6 cost=3119
+X630 G6 ('M8', 'M2') dur=7 cost=3571
+X631 G6 ('M8',) dur=5 cost=2692
+X632 G6 ('M8',) dur=6 cost=3144
+X633 G6 ('M9', 'M6') dur=8 cost=3141
+X634 G6 ('M9', 'M6') dur=7 cost=2738
+X635 G6 ('M9',) dur=5 cost=2532
+X636 G6 ('M9',) dur=4 cost=2130
+X637 G6 ('M10', 'M6') dur=8 cost=3341
+X638 G6 ('M10', 'M6') dur=7 cost=2938
+X639 G6 ('M10',) dur=5 cost=2732
+X640 G6 ('M10',) dur=4 cost=2330
+X641 G7 ('M1', 'M4') dur=3 cost=1835
+X642 G7 ('M1', 'M5') dur=4 cost=2337
+X643 G7 ('M1', 'M5') dur=3 cost=1835
+X644 G7 ('M1', 'M7') dur=4 cost=2254
+X645 G7 ('M1', 'M7') dur=3 cost=1979
+X646 G7 ('M1',) dur=3 cost=1888
+X647 G7 ('M1',) dur=2 cost=1476
+X648 G7 ('M2', 'M8') dur=6 cost=3124
+X649 G7 ('M2', 'M8') dur=7 cost=3624
+X650 G7 ('M2',) dur=3 cost=2177
+X651 G7 ('M2',) dur=5 cost=2677
+X652 G7 ('M3', 'M4') dur=4 cost=1893
+X653 G7 ('M3', 'M5') dur=5 cost=2395
+X654 G7 ('M3', 'M5') dur=4 cost=1893
+X655 G7 ('M3',) dur=4 cost=1900
+X656 G7 ('M3', 'M7') dur=5 cost=2232
+X657 G7 ('M3', 'M7') dur=4 cost=1957
+X658 G7 ('M3',) dur=3 cost=1644
+X659 G7 ('M3',) dur=3 cost=1535
+X660 G7 ('M4', 'M1') dur=4 cost=2337
+X661 G7 ('M4', 'M3') dur=4 cost=2395
+X662 G7 ('M4',) dur=2 cost=1490
+X663 G7 ('M5', 'M1') dur=4 cost=2337
+X664 G7 ('M5', 'M3') dur=4 cost=2395
+X665 G7 ('M5', 'M7') dur=4 cost=2362
+X666 G7 ('M5',) dur=3 cost=1992
+X667 G7 ('M5',) dur=2 cost=1490
+X668 G7 ('M6', 'M9') dur=7 cost=4177
+X669 G7 ('M6', 'M9') dur=5 cost=3729
+X670 G7 ('M6', 'M10') dur=8 cost=4377
+X671 G7 ('M6', 'M10') dur=6 cost=3929
+X672 G7 ('M6',) dur=6 cost=3738
+X673 G7 ('M6',) dur=4 cost=3290
+X674 G7 ('M3',) dur=4 cost=2460
+X675 G7 ('M7', 'M1') dur=5 cost=2254
+X676 G7 ('M7', 'M1') dur=4 cost=1843
+X677 G7 ('M7', 'M3') dur=5 cost=2232
+X678 G7 ('M7', 'M5') dur=5 cost=2362
+X679 G7 ('M7', 'M5') dur=4 cost=1860
+X680 G7 ('M7',) dur=3 cost=1810
+X681 G7 ('M7',) dur=2 cost=1535
+X682 G7 ('M8', 'M2') dur=6 cost=3124
+X683 G7 ('M8', 'M2') dur=7 cost=3624
+X684 G7 ('M8',) dur=5 cost=2520
+X685 G7 ('M8',) dur=6 cost=3020
+X686 G7 ('M9', 'M6') dur=7 cost=4177
+X687 G7 ('M9', 'M6') dur=5 cost=3729
+X688 G7 ('M9',) dur=5 cost=3359
+X689 G7 ('M9',) dur=4 cost=2911
+X690 G7 ('M10', 'M6') dur=7 cost=4377
+X691 G7 ('M10', 'M6') dur=5 cost=3929
+X692 G7 ('M10',) dur=5 cost=3559
+X693 G7 ('M10',) dur=4 cost=3111
+X694 G7 ('M1', 'M4') dur=4 cost=1445
+X695 G7 ('M1', 'M5') dur=4 cost=1445
+X696 G7 ('M1', 'M7') dur=5 cost=1864
+X697 G7 ('M1', 'M7') dur=4 cost=1589
+X698 G7 ('M1',) dur=3 cost=1498
+X699 G7 ('M1',) dur=2 cost=1086
+X700 G7 ('M2', 'M8') dur=6 cost=3645
+X701 G7 ('M2', 'M8') dur=8 cost=4145
+X702 G7 ('M2',) dur=4 cost=2698
+X703 G7 ('M2',) dur=5 cost=3198
+X704 G7 ('M3', 'M4') dur=4 cost=1805
+X705 G7 ('M3', 'M5') dur=4 cost=1805
+X706 G7 ('M3',) dur=4 cost=1900
+X707 G7 ('M3', 'M7') dur=4 cost=1869
+X708 G7 ('M3',) dur=3 cost=1556
+X709 G7 ('M3',) dur=3 cost=1446
+X710 G7 ('M4', 'M1') dur=5 cost=1857
+X711 G7 ('M4', 'M1') dur=4 cost=1445
+X712 G7 ('M4', 'M3') dur=5 cost=1915
+X713 G7 ('M4', 'M3') dur=5 cost=1805
+X714 G7 ('M4',) dur=2 cost=1010
+X715 G7 ('M5', 'M1') dur=5 cost=1857
+X716 G7 ('M5', 'M1') dur=4 cost=1445
+X717 G7 ('M5', 'M3') dur=5 cost=1915
+X718 G7 ('M5', 'M3') dur=5 cost=1805
+X719 G7 ('M5', 'M7') dur=5 cost=1882
+X720 G7 ('M5', 'M7') dur=4 cost=1607
+X721 G7 ('M5',) dur=4 cost=1512
+X722 G7 ('M5',) dur=2 cost=1010
+X723 G7 ('M6', 'M9') dur=6 cost=3750
+X724 G7 ('M6', 'M9') dur=5 cost=3303
+X725 G7 ('M6', 'M10') dur=7 cost=3950
+X726 G7 ('M6', 'M10') dur=6 cost=3503
+X727 G7 ('M6',) dur=5 cost=3311
+X728 G7 ('M6',) dur=4 cost=2864
+X729 G7 ('M3',) dur=4 cost=2460
+X730 G7 ('M7', 'M1') dur=4 cost=2001
+X731 G7 ('M7', 'M1') dur=3 cost=1589
+X732 G7 ('M7', 'M3') dur=4 cost=1979
+X733 G7 ('M7', 'M3') dur=4 cost=1869
+X734 G7 ('M7', 'M5') dur=3 cost=1607
+X735 G7 ('M7',) dur=3 cost=1556
+X736 G7 ('M7',) dur=2 cost=1281
+X737 G7 ('M8', 'M2') dur=5 cost=3645
+X738 G7 ('M8', 'M2') dur=7 cost=4145
+X739 G7 ('M8',) dur=4 cost=3042
+X740 G7 ('M8',) dur=5 cost=3542
+X741 G7 ('M9', 'M6') dur=7 cost=3750
+X742 G7 ('M9', 'M6') dur=6 cost=3303
+X743 G7 ('M9',) dur=6 cost=2933
+X744 G7 ('M9',) dur=5 cost=2485
+X745 G7 ('M10', 'M6') dur=7 cost=3950
+X746 G7 ('M10', 'M6') dur=6 cost=3503
+X747 G7 ('M10',) dur=6 cost=3133
+X748 G7 ('M10',) dur=5 cost=2685
+X749 G8 ('M1', 'M4') dur=3 cost=2078
+X750 G8 ('M1', 'M5') dur=4 cost=2642
+X751 G8 ('M1', 'M5') dur=3 cost=2078
+X752 G8 ('M1', 'M7') dur=4 cost=2546
+X753 G8 ('M1', 'M7') dur=3 cost=2236
+X754 G8 ('M1',) dur=3 cost=2138
+X755 G8 ('M1',) dur=2 cost=1675
+X756 G8 ('M2', 'M8') dur=6 cost=3488
+X757 G8 ('M2', 'M8') dur=7 cost=4050
+X758 G8 ('M2',) dur=3 cost=2431
+X759 G8 ('M2',) dur=5 cost=2993
+X760 G8 ('M3', 'M4') dur=4 cost=2138
+X761 G8 ('M3', 'M5') dur=5 cost=2701
+X762 G8 ('M3', 'M5') dur=4 cost=2138
+X763 G8 ('M3',) dur=4 cost=2143
+X764 G8 ('M3', 'M7') dur=5 cost=2517
+X765 G8 ('M3', 'M7') dur=4 cost=2206
+X766 G8 ('M3',) dur=3 cost=1860
+X767 G8 ('M3',) dur=3 cost=1735
+X768 G8 ('M4', 'M1') dur=4 cost=2642
+X769 G8 ('M4', 'M3') dur=4 cost=2701
+X770 G8 ('M4',) dur=2 cost=1688
+X771 G8 ('M5', 'M1') dur=4 cost=2642
+X772 G8 ('M5', 'M3') dur=4 cost=2701
+X773 G8 ('M5', 'M7') dur=4 cost=2664
+X774 G8 ('M5',) dur=3 cost=2252
+X775 G8 ('M5',) dur=2 cost=1688
+X776 G8 ('M6', 'M9') dur=7 cost=4673
+X777 G8 ('M6', 'M9') dur=5 cost=4170
+X778 G8 ('M6', 'M10') dur=8 cost=4873
+X779 G8 ('M6', 'M10') dur=6 cost=4370
+X780 G8 ('M6',) dur=6 cost=4185
+X781 G8 ('M6',) dur=4 cost=3682
+X782 G8 ('M3',) dur=4 cost=2773
+X783 G8 ('M7', 'M1') dur=5 cost=2546
+X784 G8 ('M7', 'M1') dur=4 cost=2083
+X785 G8 ('M7', 'M3') dur=5 cost=2517
+X786 G8 ('M7', 'M5') dur=5 cost=2664
+X787 G8 ('M7', 'M5') dur=4 cost=2101
+X788 G8 ('M7',) dur=3 cost=2045
+X789 G8 ('M7',) dur=2 cost=1735
+X790 G8 ('M8', 'M2') dur=6 cost=3488
+X791 G8 ('M8', 'M2') dur=7 cost=4050
+X792 G8 ('M8',) dur=5 cost=2834
+X793 G8 ('M8',) dur=6 cost=3396
+X794 G8 ('M9', 'M6') dur=7 cost=4673
+X795 G8 ('M9', 'M6') dur=5 cost=4170
+X796 G8 ('M9',) dur=5 cost=3782
+X797 G8 ('M9',) dur=4 cost=3278
+X798 G8 ('M10', 'M6') dur=7 cost=4873
+X799 G8 ('M10', 'M6') dur=5 cost=4370
+X800 G8 ('M10',) dur=5 cost=3982
+X801 G8 ('M10',) dur=4 cost=3478
+X802 G8 ('M1', 'M4') dur=4 cost=1636
+X803 G8 ('M1', 'M5') dur=4 cost=1636
+X804 G8 ('M1', 'M7') dur=5 cost=2104
+X805 G8 ('M1', 'M7') dur=4 cost=1794
+X806 G8 ('M1',) dur=3 cost=1696
+X807 G8 ('M1',) dur=2 cost=1233
+X808 G8 ('M2', 'M8') dur=6 cost=4072
+X809 G8 ('M2', 'M8') dur=8 cost=4634
+X810 G8 ('M2',) dur=4 cost=3014
+X811 G8 ('M2',) dur=5 cost=3576
+X812 G8 ('M3', 'M4') dur=4 cost=2034
+X813 G8 ('M3', 'M5') dur=4 cost=2034
+X814 G8 ('M3',) dur=4 cost=2143
+X815 G8 ('M3', 'M7') dur=4 cost=2102
+X816 G8 ('M3',) dur=3 cost=1756
+X817 G8 ('M3',) dur=3 cost=1631
+X818 G8 ('M4', 'M1') dur=5 cost=2100
+X819 G8 ('M4', 'M1') dur=4 cost=1636
+X820 G8 ('M4', 'M3') dur=5 cost=2159
+X821 G8 ('M4', 'M3') dur=5 cost=2034
+X822 G8 ('M4',) dur=2 cost=1146
+X823 G8 ('M5', 'M1') dur=5 cost=2100
+X824 G8 ('M5', 'M1') dur=4 cost=1636
+X825 G8 ('M5', 'M3') dur=5 cost=2159
+X826 G8 ('M5', 'M3') dur=5 cost=2034
+X827 G8 ('M5', 'M7') dur=5 cost=2122
+X828 G8 ('M5', 'M7') dur=4 cost=1812
+X829 G8 ('M5',) dur=4 cost=1710
+X830 G8 ('M5',) dur=2 cost=1146
+X831 G8 ('M6', 'M9') dur=6 cost=4191
+X832 G8 ('M6', 'M9') dur=5 cost=3688
+X833 G8 ('M6', 'M10') dur=7 cost=4391
+X834 G8 ('M6', 'M10') dur=6 cost=3888
+X835 G8 ('M6',) dur=5 cost=3703
+X836 G8 ('M6',) dur=4 cost=3200
+X837 G8 ('M3',) dur=4 cost=2773
+X838 G8 ('M7', 'M1') dur=4 cost=2257
+X839 G8 ('M7', 'M1') dur=3 cost=1794
+X840 G8 ('M7', 'M3') dur=4 cost=2228
+X841 G8 ('M7', 'M3') dur=4 cost=2102
+X842 G8 ('M7', 'M5') dur=3 cost=1812
+X843 G8 ('M7',) dur=3 cost=1756
+X844 G8 ('M7',) dur=2 cost=1446
+X845 G8 ('M8', 'M2') dur=5 cost=4072
+X846 G8 ('M8', 'M2') dur=7 cost=4634
+X847 G8 ('M8',) dur=4 cost=3418
+X848 G8 ('M8',) dur=5 cost=3979
+X849 G8 ('M9', 'M6') dur=7 cost=4191
+X850 G8 ('M9', 'M6') dur=6 cost=3688
+X851 G8 ('M9',) dur=6 cost=3300
+X852 G8 ('M9',) dur=5 cost=2796
+X853 G8 ('M10', 'M6') dur=7 cost=4391
+X854 G8 ('M10', 'M6') dur=6 cost=3888
+X855 G8 ('M10',) dur=6 cost=3500
+X856 G8 ('M10',) dur=5 cost=2996
+X857 G10 ('M1', 'M5') dur=4 cost=5283
+X858 G10 ('M1', 'M5') dur=3 cost=4156
+X859 G10 ('M1', 'M7') dur=4 cost=5092
+X860 G10 ('M1', 'M7') dur=3 cost=4471
+X861 G10 ('M1',) dur=3 cost=4276
+X862 G10 ('M1',) dur=2 cost=3350
+X863 G10 ('M2', 'M8') dur=6 cost=6976
+X864 G10 ('M2', 'M8') dur=7 cost=8100
+X865 G10 ('M2',) dur=3 cost=4862
+X866 G10 ('M2',) dur=5 cost=5985
+X867 G10 ('M3', 'M5') dur=5 cost=5403
+X868 G10 ('M3', 'M5') dur=4 cost=4276
+X869 G10 ('M3',) dur=4 cost=4286
+X870 G10 ('M3', 'M7') dur=5 cost=5033
+X871 G10 ('M3', 'M7') dur=4 cost=4412
+X872 G10 ('M3',) dur=3 cost=3720
+X873 G10 ('M3',) dur=3 cost=3470
+X874 G10 ('M4',) dur=2 cost=3377
+X875 G10 ('M5', 'M1') dur=4 cost=5283
+X876 G10 ('M5', 'M3') dur=4 cost=5403
+X877 G10 ('M5', 'M7') dur=4 cost=5329
+X878 G10 ('M5',) dur=3 cost=4504
+X879 G10 ('M5',) dur=2 cost=3377
+X880 G10 ('M6', 'M9') dur=7 cost=9346
+X881 G10 ('M6', 'M9') dur=5 cost=8339
+X882 G10 ('M6', 'M10') dur=8 cost=9746
+X883 G10 ('M6', 'M10') dur=6 cost=8739
+X884 G10 ('M6',) dur=6 cost=8370
+X885 G10 ('M6',) dur=4 cost=7363
+X886 G10 ('M3',) dur=4 cost=5545
+X887 G10 ('M7', 'M1') dur=5 cost=5092
+X888 G10 ('M7', 'M1') dur=4 cost=4166
+X889 G10 ('M7', 'M3') dur=5 cost=5033
+X890 G10 ('M7', 'M5') dur=5 cost=5329
+X891 G10 ('M7', 'M5') dur=4 cost=4202
+X892 G10 ('M7',) dur=3 cost=4091
+X893 G10 ('M7',) dur=2 cost=3470
+X894 G10 ('M8', 'M2') dur=6 cost=6976
+X895 G10 ('M8', 'M2') dur=7 cost=8100
+X896 G10 ('M8',) dur=5 cost=5668
+X897 G10 ('M8',) dur=6 cost=6792
+X898 G10 ('M9', 'M6') dur=7 cost=9346
+X899 G10 ('M9', 'M6') dur=5 cost=8339
+X900 G10 ('M9',) dur=5 cost=7563
+X901 G10 ('M9',) dur=4 cost=6556
+X902 G10 ('M10', 'M6') dur=7 cost=9746
+X903 G10 ('M10', 'M6') dur=5 cost=8739
+X904 G10 ('M10',) dur=5 cost=7963
+X905 G10 ('M10',) dur=4 cost=6956
+X906 G10 ('M1', 'M5') dur=4 cost=3273
+X907 G10 ('M1', 'M7') dur=5 cost=4209
+X908 G10 ('M1', 'M7') dur=4 cost=3588
+X909 G10 ('M1',) dur=3 cost=3393
+X910 G10 ('M1',) dur=2 cost=2466
+X911 G10 ('M2', 'M8') dur=6 cost=8143
+X912 G10 ('M2', 'M8') dur=8 cost=9267
+X913 G10 ('M2',) dur=4 cost=6028
+X914 G10 ('M2',) dur=5 cost=7152
+X915 G10 ('M3', 'M5') dur=4 cost=4068
+X916 G10 ('M3',) dur=4 cost=4286
+X917 G10 ('M3', 'M7') dur=4 cost=4204
+X918 G10 ('M3',) dur=3 cost=3513
+X919 G10 ('M3',) dur=3 cost=3262
+X920 G10 ('M4',) dur=2 cost=2293
+X921 G10 ('M5', 'M1') dur=5 cost=4199
+X922 G10 ('M5', 'M1') dur=4 cost=3273
+X923 G10 ('M5', 'M3') dur=5 cost=4319
+X924 G10 ('M5', 'M3') dur=5 cost=4068
+X925 G10 ('M5', 'M7') dur=5 cost=4245
+X926 G10 ('M5', 'M7') dur=4 cost=3624
+X927 G10 ('M5',) dur=4 cost=3420
+X928 G10 ('M5',) dur=2 cost=2293
+X929 G10 ('M6', 'M9') dur=6 cost=8382
+X930 G10 ('M6', 'M9') dur=5 cost=7376
+X931 G10 ('M6', 'M10') dur=7 cost=8782
+X932 G10 ('M6', 'M10') dur=6 cost=7776
+X933 G10 ('M6',) dur=5 cost=7406
+X934 G10 ('M6',) dur=4 cost=6399
+X935 G10 ('M3',) dur=4 cost=5545
+X936 G10 ('M7', 'M1') dur=4 cost=4514
+X937 G10 ('M7', 'M1') dur=3 cost=3588
+X938 G10 ('M7', 'M3') dur=4 cost=4455
+X939 G10 ('M7', 'M3') dur=4 cost=4204
+X940 G10 ('M7', 'M5') dur=3 cost=3624
+X941 G10 ('M7',) dur=3 cost=3513
+X942 G10 ('M7',) dur=2 cost=2891
+X943 G10 ('M8', 'M2') dur=5 cost=8143
+X944 G10 ('M8', 'M2') dur=7 cost=9267
+X945 G10 ('M8',) dur=4 cost=6835
+X946 G10 ('M8',) dur=5 cost=7959
+X947 G10 ('M9', 'M6') dur=7 cost=8382
+X948 G10 ('M9', 'M6') dur=6 cost=7376
+X949 G10 ('M9',) dur=6 cost=6599
+X950 G10 ('M9',) dur=5 cost=5593
+X951 G10 ('M10', 'M6') dur=7 cost=8782
+X952 G10 ('M10', 'M6') dur=6 cost=7776
+X953 G10 ('M10',) dur=6 cost=6999
+X954 G10 ('M10',) dur=5 cost=5993
+X955 G11 ('M1', 'M4') dur=3 cost=2890
+X956 G11 ('M1', 'M5') dur=5 cost=3738
+X957 G11 ('M1', 'M5') dur=3 cost=2890
+X958 G11 ('M1', 'M7') dur=5 cost=3593
+X959 G11 ('M1', 'M7') dur=4 cost=3019
+X960 G11 ('M1',) dur=4 cost=3090
+X961 G11 ('M1',) dur=2 cost=2351
+X962 G11 ('M2', 'M8') dur=5 cost=4089
+X963 G11 ('M2', 'M8') dur=7 cost=4935
+X964 G11 ('M2',) dur=3 cost=2893
+X965 G11 ('M2',) dur=5 cost=3739
+X966 G11 ('M3', 'M4') dur=3 cost=2919
+X967 G11 ('M3', 'M5') dur=5 cost=3767
+X968 G11 ('M3', 'M5') dur=3 cost=2919
+X969 G11 ('M3',) dur=3 cost=2949
+X970 G11 ('M3', 'M7') dur=5 cost=3525
+X971 G11 ('M3', 'M7') dur=3 cost=2952
+X972 G11 ('M3',) dur=3 cost=2753
+X973 G11 ('M3',) dur=2 cost=2380
+X974 G11 ('M4', 'M1') dur=5 cost=3738
+X975 G11 ('M4', 'M3') dur=5 cost=3767
+X976 G11 ('M4',) dur=2 cost=2360
+X977 G11 ('M5', 'M1') dur=5 cost=3738
+X978 G11 ('M5', 'M3') dur=5 cost=3767
+X979 G11 ('M5', 'M7') dur=5 cost=3716
+X980 G11 ('M5',) dur=4 cost=3207
+X981 G11 ('M5',) dur=2 cost=2360
+X982 G11 ('M6', 'M9') dur=7 cost=6481
+X983 G11 ('M6', 'M9') dur=6 cost=5698
+X984 G11 ('M6', 'M10') dur=8 cost=6681
+X985 G11 ('M6', 'M10') dur=7 cost=5898
+X986 G11 ('M6',) dur=6 cost=5870
+X987 G11 ('M6',) dur=5 cost=5087
+X988 G11 ('M3',) dur=5 cost=3868
+X989 G11 ('M7', 'M1') dur=5 cost=3593
+X990 G11 ('M7', 'M1') dur=3 cost=2854
+X991 G11 ('M7', 'M3') dur=5 cost=3525
+X992 G11 ('M7', 'M5') dur=5 cost=3716
+X993 G11 ('M7', 'M5') dur=3 cost=2868
+X994 G11 ('M7',) dur=4 cost=2943
+X995 G11 ('M7',) dur=2 cost=2369
+X996 G11 ('M8', 'M2') dur=5 cost=4089
+X997 G11 ('M8', 'M2') dur=7 cost=4935
+X998 G11 ('M8',) dur=4 cost=3311
+X999 G11 ('M8',) dur=6 cost=4157
+X1000 G11 ('M9', 'M6') dur=8 cost=6481
+X1001 G11 ('M9', 'M6') dur=7 cost=5698
+X1002 G11 ('M9',) dur=6 cost=5318
+X1003 G11 ('M9',) dur=4 cost=4536
+X1004 G11 ('M10', 'M6') dur=8 cost=6681
+X1005 G11 ('M10', 'M6') dur=7 cost=5898
+X1006 G11 ('M10',) dur=6 cost=5518
+X1007 G11 ('M10',) dur=4 cost=4736
+X1008 G11 ('M1', 'M4') dur=4 cost=2194
+X1009 G11 ('M1', 'M5') dur=4 cost=2194
+X1010 G11 ('M1', 'M7') dur=5 cost=2897
+X1011 G11 ('M1', 'M7') dur=4 cost=2323
+X1012 G11 ('M1',) dur=4 cost=2394
+X1013 G11 ('M1',) dur=3 cost=1655
+X1014 G11 ('M2', 'M8') dur=6 cost=4978
+X1015 G11 ('M2', 'M8') dur=8 cost=5824
+X1016 G11 ('M2',) dur=4 cost=3782
+X1017 G11 ('M2',) dur=6 cost=4628
+X1018 G11 ('M3', 'M4') dur=3 cost=2589
+X1019 G11 ('M3', 'M5') dur=3 cost=2589
+X1020 G11 ('M3',) dur=4 cost=2949
+X1021 G11 ('M3', 'M7') dur=3 cost=2621
+X1022 G11 ('M3',) dur=3 cost=2423
+X1023 G11 ('M3',) dur=2 cost=2050
+X1024 G11 ('M4', 'M1') dur=5 cost=2933
+X1025 G11 ('M4', 'M1') dur=4 cost=2194
+X1026 G11 ('M4', 'M3') dur=5 cost=2962
+X1027 G11 ('M4', 'M3') dur=4 cost=2589
+X1028 G11 ('M5', 'M1') dur=5 cost=2933
+X1029 G11 ('M5', 'M1') dur=4 cost=2194
+X1030 G11 ('M5', 'M3') dur=5 cost=2962
+X1031 G11 ('M5', 'M3') dur=4 cost=2589
+X1032 G11 ('M5', 'M7') dur=5 cost=2911
+X1033 G11 ('M5', 'M7') dur=4 cost=2338
+X1034 G11 ('M5',) dur=4 cost=2403
+X1035 G11 ('M5',) dur=2 cost=1555
+X1036 G11 ('M6', 'M9') dur=8 cost=5741
+X1037 G11 ('M6', 'M9') dur=6 cost=4959
+X1038 G11 ('M6', 'M10') dur=9 cost=5941
+X1039 G11 ('M6', 'M10') dur=7 cost=5159
+X1040 G11 ('M6',) dur=7 cost=5130
+X1041 G11 ('M6',) dur=5 cost=4348
+X1042 G11 ('M3',) dur=5 cost=3868
+X1043 G11 ('M7', 'M1') dur=5 cost=3062
+X1044 G11 ('M7', 'M1') dur=3 cost=2323
+X1045 G11 ('M7', 'M3') dur=4 cost=2995
+X1046 G11 ('M7', 'M3') dur=3 cost=2621
+X1047 G11 ('M7', 'M5') dur=3 cost=2338
+X1048 G11 ('M7',) dur=3 cost=2412
+X1049 G11 ('M7',) dur=2 cost=1838
+X1050 G11 ('M8', 'M2') dur=5 cost=4978
+X1051 G11 ('M8', 'M2') dur=7 cost=5824
+X1052 G11 ('M8',) dur=4 cost=4200
+X1053 G11 ('M8',) dur=6 cost=5046
+X1054 G11 ('M9', 'M6') dur=8 cost=5741
+X1055 G11 ('M9', 'M6') dur=6 cost=4959
+X1056 G11 ('M9',) dur=6 cost=4579
+X1057 G11 ('M9',) dur=4 cost=3796
+X1058 G11 ('M10', 'M6') dur=8 cost=5941
+X1059 G11 ('M10', 'M6') dur=6 cost=5159
+X1060 G11 ('M10',) dur=6 cost=4779
+X1061 G11 ('M10',) dur=4 cost=3996
+X1062 G3 ('M11',) dur=5 cost=3940
+X1063 G3 ('M11',) dur=3 cost=4300
+X1064 G3 ('M11',) dur=5 cost=3940
+X1065 G3 ('M11',) dur=4 cost=3200
+X1066 G1 ('M11',) dur=5 cost=3940
+X1067 G1 ('M11',) dur=3 cost=4300
+X1068 G1 ('M11',) dur=5 cost=3940
+X1069 G1 ('M11',) dur=4 cost=3200
