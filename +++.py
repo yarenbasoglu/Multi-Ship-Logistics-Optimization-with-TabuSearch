@@ -63,6 +63,31 @@ class Route:
 
 Solution = Dict[str, Tuple[str, ...]]
 
+# Rolling-horizon icin operasyonel veri modelleri (Adim 1)
+@dataclass(frozen=True)
+class Job:
+    job_id: str
+    job_type: str  # customer | depot
+    target: str
+    demand_day: int
+    qty: int
+    earliest_day: int
+    latest_day: int
+
+@dataclass
+class ShipState:
+    ship_id: str
+    busy_intervals: List[Tuple[int, int]]
+
+@dataclass
+class PlanRecord:
+    day: int
+    window_start: int
+    window_end: int
+    selected_jobs: List[str]
+    assignments: List[str]
+    unassigned_count: int
+
 
 # 3) PARSING
 
@@ -428,6 +453,74 @@ def print_excel_data_preview(
     print(f"\nMesgul gemi sayisi: {len(busy_days)}")
     for sid in sorted(busy_days.keys(), key=lambda x: safe_int(re.sub(r'[^0-9]', '', x), 999))[:max_rows]:
         print(f"  {sid}: days={sorted(busy_days[sid])}")
+
+
+# 3.4) ROLLING HORIZON SKELETON (Adim 2)
+
+def build_customer_jobs(locs: Dict[str, Location], tolerance: int = 2) -> Dict[str, Job]:
+    jobs: Dict[str, Job] = {}
+    for lid, loc in locs.items():
+        jobs[lid] = Job(
+            job_id=lid,
+            job_type="customer",
+            target=lid,
+            demand_day=loc.demand_day,
+            qty=loc.qty,
+            earliest_day=max(1, loc.demand_day - tolerance),
+            latest_day=min(35, loc.demand_day + tolerance),
+        )
+    return jobs
+
+def build_ship_state_map(ships: Dict[str, Ship], busy_days: Dict[str, Set[int]]) -> Dict[str, ShipState]:
+    state_map: Dict[str, ShipState] = {}
+    for sid in ships.keys():
+        days = sorted(busy_days.get(sid, set()))
+        intervals: List[Tuple[int, int]] = []
+        if days:
+            s = e = days[0]
+            for d in days[1:]:
+                if d == e + 1:
+                    e = d
+                else:
+                    intervals.append((s, e))
+                    s = e = d
+            intervals.append((s, e))
+        state_map[sid] = ShipState(ship_id=sid, busy_intervals=intervals)
+    return state_map
+
+def run_rolling_horizon_day_loop(
+    jobs_by_id: Dict[str, Job],
+    horizon_len: int = 10,
+    total_days: int = 35,
+) -> Tuple[List[PlanRecord], List[Job]]:
+    # Atama yapilmayan isler silinmez; kuyruğa alınır.
+    unassigned_queue: List[Job] = list(jobs_by_id.values())
+    plan_logs: List[PlanRecord] = []
+
+    for day in range(1, total_days + 1):
+        window_start = day
+        window_end = min(total_days, day + horizon_len - 1)
+        window_jobs = [
+            j for j in unassigned_queue
+            if not (j.latest_day < window_start or j.earliest_day > window_end)
+        ]
+
+        # Bu asamada yalnizca iskelet: secim/atama adimlari sonraki adimlarda eklenecek.
+        selected_jobs = [j.job_id for j in window_jobs]
+        assignments: List[str] = []
+
+        plan_logs.append(
+            PlanRecord(
+                day=day,
+                window_start=window_start,
+                window_end=window_end,
+                selected_jobs=selected_jobs,
+                assignments=assignments,
+                unassigned_count=len(unassigned_queue),
+            )
+        )
+
+    return plan_logs, unassigned_queue
 
 
 # 3.5) DYNAMIC DEPOT ROUTE GENERATION
@@ -1078,7 +1171,26 @@ def main():
             BUSY_DAYS_BY_SHIP,
             max_rows=EXCEL_PREVIEW_ROWS,
         )
-    
+
+    # Adim 1 + 2 demo: veri modelleri + rolling horizon gunluk pencere
+    jobs_by_id = build_customer_jobs(locs, tolerance=2)
+    ship_state_map = build_ship_state_map(ships, BUSY_DAYS_BY_SHIP)
+    plan_logs, unassigned_queue = run_rolling_horizon_day_loop(
+        jobs_by_id=jobs_by_id,
+        horizon_len=10,
+        total_days=35,
+    )
+    print("\n=== ROLLING HORIZON PREVIEW (Adim 1-2) ===")
+    print(f"ShipState count: {len(ship_state_map)}")
+    for sid in sorted(ship_state_map.keys(), key=lambda x: safe_int(re.sub(r'[^0-9]', '', x), 999))[:5]:
+        print(f"  {sid}: busy={ship_state_map[sid].busy_intervals}")
+    for rec in plan_logs[:5]:
+        print(
+            f"t={rec.day} window=[{rec.window_start}..{rec.window_end}] "
+            f"jobs_in_window={len(rec.selected_jobs)} unassigned={rec.unassigned_count}"
+        )
+    print(f"Queue size (end): {len(unassigned_queue)}")
+    return
     # Depo rotalarını üret ve ekle
     new_depot_routes = generate_depot_routes(ships, base_routes, depots, locs)
     base_routes.update(new_depot_routes)
