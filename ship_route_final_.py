@@ -488,26 +488,239 @@ def build_ship_state_map(ships: Dict[str, Ship], busy_days: Dict[str, Set[int]])
         state_map[sid] = ShipState(ship_id=sid, busy_intervals=intervals)
     return state_map
 
+def compute_projected_depot_level(day: int, depot: Depot) -> int:
+    # Basit lineer stok projeksiyonu: initial - tuketim*gun
+    return depot.initial_level - depot.daily_decay * max(0, day - 1)
+
+def build_depot_risk_jobs(
+    day: int,
+    depots: Dict[str, Depot],
+    min_sailing_days: int = 3,
+) -> List[Job]:
+    # Adim 3: depo risk kontrolu (threshold)
+    # threshold = min_cap + daily_decay * min_sailing_days
+    risk_jobs: List[Job] = []
+    for depot_id, depot in depots.items():
+        if depot.daily_decay <= 0:
+            continue
+        threshold = depot.min_cap + depot.daily_decay * min_sailing_days
+        projected = compute_projected_depot_level(day, depot)
+        if projected <= threshold:
+            qty = max(1, depot.max_cap - projected)
+            risk_jobs.append(
+                Job(
+                    job_id=f"DEPOT_{depot_id}_D{day}",
+                    job_type="depot",
+                    target=depot_id,
+                    demand_day=day,
+                    qty=qty,
+                    earliest_day=day,
+                    latest_day=min(35, day + min_sailing_days),
+                )
+            )
+    return risk_jobs
+
+def build_daily_critical_jobs(
+    day: int,
+    window_start: int,
+    window_end: int,
+    unassigned_queue: List[Job],
+    depot_risk_jobs: List[Job],
+) -> List[Job]:
+    # Adim 4: oncelik = depo krizi > musteri deadline
+    window_customer_jobs = [
+        j for j in unassigned_queue
+        if not (j.latest_day < window_start or j.earliest_day > window_end)
+    ]
+    window_customer_jobs.sort(key=lambda j: (j.latest_day, j.demand_day, -j.qty))
+    return depot_risk_jobs + window_customer_jobs
+
+def _windows_overlap(a: Job, b: Job) -> bool:
+    return not (a.latest_day < b.earliest_day or b.latest_day < a.earliest_day)
+
+def _interval_free(intervals: List[Tuple[int, int]], start: int, end: int) -> bool:
+    for s, e in intervals:
+        if not (end < s or start > e):
+            return False
+    return True
+
+def _add_busy_interval(state: ShipState, start: int, end: int) -> None:
+    intervals = sorted(state.busy_intervals + [(start, end)])
+    merged: List[Tuple[int, int]] = []
+    for s, e in intervals:
+        if not merged or s > merged[-1][1] + 1:
+            merged.append((s, e))
+        else:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], e))
+    state.busy_intervals = merged
+
+def _build_route_indexes(routes: Dict[str, Route]) -> Tuple[Dict[str, List[Route]], Dict[str, List[Route]]]:
+    by_customer: Dict[str, List[Route]] = {}
+    by_depot: Dict[str, List[Route]] = {}
+    for r in routes.values():
+        for s in r.stops:
+            if s.startswith("M"):
+                by_customer.setdefault(s, []).append(r)
+            if s.startswith("M") and r.is_depot_delivery:
+                # depot id'leri excelde M6/M7/M8 seklinde oldugu icin M ile basliyor
+                by_depot.setdefault(s, []).append(r)
+    return by_customer, by_depot
+
+def build_job_package(
+    seed_job: Job,
+    candidate_jobs: List[Job],
+    locs: Dict[str, Location],
+    depot_risk_jobs: List[Job],
+) -> List[Job]:
+    # Adim 5: Is birlestirme sirasi -> local -> inventory -> cross-city
+    package = [seed_job]
+    if seed_job.job_type != "customer":
+        return package
+
+    # A) Local merge
+    same_region = [
+        j for j in candidate_jobs
+        if j.job_type == "customer"
+        and j.job_id != seed_job.job_id
+        and locs.get(j.target) and locs.get(seed_job.target)
+        and locs[j.target].region == locs[seed_job.target].region
+        and _windows_overlap(seed_job, j)
+    ]
+    if same_region:
+        same_region.sort(key=lambda j: (j.latest_day, -j.qty))
+        package.append(same_region[0])
+    else:
+        # C) Cross-city merge (local yoksa)
+        cross_city = [
+            j for j in candidate_jobs
+            if j.job_type == "customer"
+            and j.job_id != seed_job.job_id
+            and _windows_overlap(seed_job, j)
+        ]
+        cross_city.sort(key=lambda j: (j.latest_day, -j.qty))
+        if cross_city:
+            package.append(cross_city[0])
+
+    # B) Inventory trigger
+    if depot_risk_jobs:
+        package.append(depot_risk_jobs[0])
+
+    return package
+
+def select_assignment_for_package(
+    package: List[Job],
+    ships: Dict[str, Ship],
+    routes: Dict[str, Route],
+    ship_state_map: Dict[str, ShipState],
+    day: int,
+    window_end: int,
+    by_customer: Dict[str, List[Route]],
+    by_depot: Dict[str, List[Route]],
+) -> Optional[Tuple[str, str, int, int]]:
+    customer_targets = [j.target for j in package if j.job_type == "customer"]
+    depot_targets = [j.target for j in package if j.job_type == "depot"]
+
+    candidate_routes: List[Route] = []
+    if customer_targets:
+        base = by_customer.get(customer_targets[0], [])
+        for r in base:
+            stops_set = set(r.stops)
+            if all(t in stops_set for t in customer_targets):
+                if depot_targets and not all(d in stops_set for d in depot_targets):
+                    continue
+                candidate_routes.append(r)
+    elif depot_targets:
+        base = by_depot.get(depot_targets[0], [])
+        for r in base:
+            if all(d in set(r.stops) for d in depot_targets):
+                candidate_routes.append(r)
+
+    # Adim 6 iskeleti: uygun degilse queue'da kalacak
+    candidate_routes.sort(key=lambda r: r.cost)
+    for r in candidate_routes:
+        sid = r.ship_id
+        ship = ships[sid]
+        total_qty = sum(j.qty for j in package if j.job_type == "customer")
+        if total_qty > ship.capacity:
+            continue
+        start_min = max(day, max((j.earliest_day for j in package), default=day))
+        start_max = min(window_end, min((j.latest_day for j in package), default=window_end))
+        if start_min > start_max:
+            continue
+        for start_day in range(start_min, start_max + 1):
+            end_day = start_day + r.duration - 1
+            if end_day > 35 or end_day > window_end:
+                continue
+            if _interval_free(ship_state_map[sid].busy_intervals, start_day, end_day):
+                return sid, r.route_id, start_day, end_day
+    return None
+
 def run_rolling_horizon_day_loop(
     jobs_by_id: Dict[str, Job],
+    depots: Dict[str, Depot],
+    ships: Dict[str, Ship],
+    routes: Dict[str, Route],
+    ship_state_map: Dict[str, ShipState],
+    locs: Dict[str, Location],
     horizon_len: int = 10,
     total_days: int = 35,
 ) -> Tuple[List[PlanRecord], List[Job]]:
     # Atama yapilmayan isler silinmez; kuyruğa alınır.
     unassigned_queue: List[Job] = list(jobs_by_id.values())
     plan_logs: List[PlanRecord] = []
+    by_customer, by_depot = _build_route_indexes(routes)
 
     for day in range(1, total_days + 1):
         window_start = day
         window_end = min(total_days, day + horizon_len - 1)
-        window_jobs = [
-            j for j in unassigned_queue
-            if not (j.latest_day < window_start or j.earliest_day > window_end)
-        ]
+        depot_risk_jobs = build_depot_risk_jobs(day, depots)
+        critical_jobs = build_daily_critical_jobs(
+            day=day,
+            window_start=window_start,
+            window_end=window_end,
+            unassigned_queue=unassigned_queue,
+            depot_risk_jobs=depot_risk_jobs,
+        )
 
-        # Bu asamada yalnizca iskelet: secim/atama adimlari sonraki adimlarda eklenecek.
-        selected_jobs = [j.job_id for j in window_jobs]
+        selected_jobs = [j.job_id for j in critical_jobs]
         assignments: List[str] = []
+        assigned_job_ids: Set[str] = set()
+
+        for job in critical_jobs:
+            if job.job_id in assigned_job_ids:
+                continue
+            if job.job_type == "customer" and all(q.job_id != job.job_id for q in unassigned_queue):
+                continue
+
+            candidate_customers = [
+                j for j in critical_jobs
+                if j.job_type == "customer" and j.job_id not in assigned_job_ids
+            ]
+            package = build_job_package(job, candidate_customers, locs, depot_risk_jobs)
+            assignment = select_assignment_for_package(
+                package=package,
+                ships=ships,
+                routes=routes,
+                ship_state_map=ship_state_map,
+                day=day,
+                window_end=window_end,
+                by_customer=by_customer,
+                by_depot=by_depot,
+            )
+            if assignment is None:
+                # Adim 6: Uygun degilse silme yok, kuyrukta kalir.
+                continue
+
+            sid, rid, start_day, end_day = assignment
+            _add_busy_interval(ship_state_map[sid], start_day, end_day)
+            pkg_ids = [p.job_id for p in package if p.job_type == "customer"]
+            assigned_job_ids.update(pkg_ids)
+            assignments.append(
+                f"{humanize_code(sid)}->{rid} [{start_day}-{end_day}] jobs={pkg_ids}"
+            )
+
+        if assigned_job_ids:
+            unassigned_queue = [j for j in unassigned_queue if j.job_id not in assigned_job_ids]
 
         plan_logs.append(
             PlanRecord(
@@ -1177,18 +1390,26 @@ def main():
     ship_state_map = build_ship_state_map(ships, BUSY_DAYS_BY_SHIP)
     plan_logs, unassigned_queue = run_rolling_horizon_day_loop(
         jobs_by_id=jobs_by_id,
+        depots=depots,
+        ships=ships,
+        routes=base_routes,
+        ship_state_map=ship_state_map,
+        locs=locs,
         horizon_len=10,
         total_days=35,
     )
-    print("\n=== ROLLING HORIZON PREVIEW (Adim 1-2) ===")
+    print("\n=== ROLLING HORIZON PREVIEW (Adim 1-6) ===")
     print(f"ShipState count: {len(ship_state_map)}")
     for sid in sorted(ship_state_map.keys(), key=lambda x: safe_int(re.sub(r'[^0-9]', '', x), 999))[:5]:
         print(f"  {sid}: busy={ship_state_map[sid].busy_intervals}")
     for rec in plan_logs[:5]:
         print(
             f"t={rec.day} window=[{rec.window_start}..{rec.window_end}] "
-            f"jobs_in_window={len(rec.selected_jobs)} unassigned={rec.unassigned_count}"
+            f"jobs_in_window={len(rec.selected_jobs)} assigned={len(rec.assignments)} "
+            f"unassigned={rec.unassigned_count}"
         )
+        for a in rec.assignments[:2]:
+            print(f"    - {a}")
     print(f"Queue size (end): {len(unassigned_queue)}")
     return
     # Depo rotalarını üret ve ekle
