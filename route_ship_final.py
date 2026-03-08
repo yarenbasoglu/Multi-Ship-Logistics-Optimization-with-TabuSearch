@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import random
 import re
+import csv
 import zipfile
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -12,7 +13,7 @@ from copy import deepcopy
 # 1) CONSISTENT DATA
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-EXCEL_INPUT_PATH = os.path.join(BASE_DIR, "data_ship.xlsx")
+EXCEL_INPUT_PATH = os.path.join(BASE_DIR, "data", "from_data_ship")
 XML_NS = {
     "a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
     "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
@@ -1263,6 +1264,69 @@ def _xlsx_sheet_paths(book: zipfile.ZipFile) -> Dict[str, str]:
     return paths
 
 def _xlsx_rows_as_dicts(path: str) -> Dict[str, List[Dict[str, str]]]:
+    # Yeni veri kaynagi: data/from_data_ship klasorundeki CSV dosyalari
+    if os.path.isdir(path):
+        out: Dict[str, List[Dict[str, str]]] = {}
+        csv_files = [f for f in os.listdir(path) if f.lower().endswith(".csv")]
+        if not csv_files:
+            return out
+
+        sheet_name_map = {
+            "musteri_talepleri": "Musteri_Talepleri",
+            "kapasite": "Kapasite",
+            "mesguliyetler": "Mesguliyetler",
+            "gun_maliyet": "Gun_Maliyet",
+            "max_stock": "Max Stock",
+            "initial_stock": "Initial Stock",
+            "safety_stock": "Safety Stock",
+            "tuketim": "Tuketim",
+            "rafineri_talebi": "Rafineri Talebi",
+        }
+
+        for fname in csv_files:
+            raw_key = os.path.splitext(fname)[0]
+            key = normalize_code(raw_key.lower())
+            sheet_name = sheet_name_map.get(key, raw_key)
+            fpath = os.path.join(path, fname)
+
+            rows: List[Dict[str, str]] = []
+            with open(fpath, "r", encoding="utf-8-sig", newline="") as f:
+                reader = csv.reader(f, delimiter=";")
+                matrix = [[(c or "").strip() for c in r] for r in reader]
+
+            # Tamamen bos satirlari at
+            matrix = [r for r in matrix if any(c.strip() for c in r)]
+            if not matrix:
+                out[sheet_name] = []
+                continue
+
+            headers = [h.strip() for h in matrix[0]]
+            # Trailing bos kolonlari temizle (CSV'lerde ";;" var)
+            while headers and headers[-1] == "":
+                headers.pop()
+            if not headers:
+                out[sheet_name] = []
+                continue
+
+            for r in matrix[1:]:
+                if len(r) < len(headers):
+                    r = r + [""] * (len(headers) - len(r))
+                else:
+                    r = r[:len(headers)]
+                rec = {headers[i] if headers[i] else f"COL_{i+1}": r[i] for i in range(len(headers))}
+                if any(str(v).strip() for v in rec.values()):
+                    rows.append(rec)
+
+            out[sheet_name] = rows
+
+            # Kodda hem bosluklu hem alti-cizgili isimler kullanildigi icin alias ekle
+            if " " in sheet_name:
+                out[sheet_name.replace(" ", "_")] = rows
+            if "_" in sheet_name:
+                out[sheet_name.replace("_", " ")] = rows
+
+        return out
+
     out: Dict[str, List[Dict[str, str]]] = {}
     with zipfile.ZipFile(path) as book:
         sst = _xlsx_shared_strings(book)
@@ -1528,8 +1592,19 @@ def load_from_excel(path: str) -> Tuple[Dict[str, Location], Dict[str, Ship], Di
         stop_regions = {locs[s].region for s in stops}
         region = stop_regions.pop() if len(stop_regions) == 1 else "MIXED"
         demand_tons = sum(locs[s].qty for s in stops)
-        rid = f"X{route_no}"
-        route_no += 1
+        # Route ID'yi Gun_Maliyet'teki "se" kolonu ile birebir eslestir.
+        se_val = safe_int(row.get("se", "0"), 0)
+        if se_val > 0:
+            rid = f"X{se_val}"
+        else:
+            rid = f"X{route_no}"
+            route_no += 1
+        if rid in routes:
+            # Olasi cakismanin ustune yazma; deterministik suffix ekle.
+            suffix = 2
+            while f"{rid}_{suffix}" in routes:
+                suffix += 1
+            rid = f"{rid}_{suffix}"
 
         routes[rid] = Route(
             route_id=rid,
@@ -2590,14 +2665,14 @@ def main():
 
     if not os.path.exists(EXCEL_INPUT_PATH):
         raise FileNotFoundError(
-            f"Excel veri dosyasi bulunamadi: {EXCEL_INPUT_PATH}. "
-            "Bu uygulama sadece Excel verisi ile calisacak sekilde ayarlandi."
+            f"Veri klasoru bulunamadi: {EXCEL_INPUT_PATH}. "
+            "Bu uygulama sadece data/from_data_ship verileri ile calisacak sekilde ayarlandi."
         )
 
     locs, ships, depots, base_routes, BUSY_DAYS_BY_SHIP = load_from_excel(EXCEL_INPUT_PATH)
     if not COMPACT_CONSOLE_OUTPUT:
         print("DEPOT IDS:", sorted(depots.keys()))
-        print(f"[DATA] Excel yüklendi: {EXCEL_INPUT_PATH}")
+        print(f"[DATA] Veri klasoru yüklendi: {EXCEL_INPUT_PATH}")
         print(f"[DATA] Musteri={len(locs)} Gemi={len(ships)} Rota={len(base_routes)}")
     if SHOW_EXCEL_DEBUG_OUTPUT:
         print_excel_data_preview(
@@ -2631,9 +2706,8 @@ def main():
         job_count_by_customer[job.location] = job_count_by_customer.get(job.location, 0) + 1
         job_ids_by_customer.setdefault(job.location, []).append(job.job_id)
 
+    # Sadece Gun_maliyet tablosundaki rotalar kullanilsin.
     planning_routes = dict(base_routes)
-    planning_routes.update(generate_synthetic_merge_routes(ships, planning_routes, locs))
-    planning_routes.update(generate_depot_routes(ships, base_routes, depots, locs))
 
     plan_logs, unassigned_queue, ship_state_map = run_rolling_horizon_day_loop_step15(
         jobs_by_id=jobs_by_id,
